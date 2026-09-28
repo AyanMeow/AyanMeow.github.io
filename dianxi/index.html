@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>西安 → 芒市 · 瑞丽 · 腾冲 · 九日休闲之旅（2026.10.20 – 10.28）</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.css"/>
+<script src="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+  :root{
+    --green:#5c4033; --green-l:#8a6d3b; --gold:#c9a227; --gold-l:#f3e6c2;
+    --ink:#2f2a26; --muted:#75695e; --bg:#f6f3ec; --card:#ffffff;
+    --red:#b3432b; --blue:#2f6f8f; --line:#e5ded2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  a{overflow-wrap:anywhere;}
+  body{font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif; background:var(--bg); color:var(--ink);
+       font-size:24px; line-height:1.75;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 22px 80px;}
+
+  /* ---------- 封面 ---------- */
+  header.hero{
+    background:linear-gradient(135deg,#3d2b1f 0%,#5c4033 55%,#8a6d3b 100%);
+    color:#fff; padding:72px 22px 64px; text-align:center; position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; inset:auto -60px -120px -60px; height:220px;
+    background:radial-gradient(circle at 15% 0%, rgba(201,162,39,.4), transparent 55%),
+               radial-gradient(circle at 85% 20%, rgba(201,162,39,.25), transparent 50%);
+  }
+  .hero .tag{display:inline-block; border:1px solid rgba(255,255,255,.45); border-radius:999px;
+             padding:5px 24px; font-size:20px; letter-spacing:6px; margin-bottom:22px;}
+  .hero h1{font-size:clamp(36px,6vw,60px); letter-spacing:2px; font-weight:700;}
+  .hero h1 small{display:block; font-size:.45em; font-weight:400; letter-spacing:6px; margin-top:12px; opacity:.85;}
+  .hero .pills{margin-top:30px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;}
+  .hero .pill{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+              border-radius:14px; padding:10px 22px; font-size:21px;}
+  .hero .pill b{color:var(--gold-l); font-weight:600;}
+
+  /* ---------- 导航 ---------- */
+  nav.toc{position:sticky; top:0; z-index:900; background:rgba(246,243,236,.96); backdrop-filter:blur(6px);
+          border-bottom:1px solid var(--line);}
+  nav.toc .in{max-width:1180px; margin:0 auto; padding:12px 22px; display:flex; gap:8px; flex-wrap:wrap;}
+  nav.toc a{text-decoration:none; color:var(--green); font-size:20px; padding:6px 16px; border-radius:10px;
+            transition:.15s;}
+  nav.toc a:hover{background:var(--gold-l);}
+
+  /* ---------- 章节通用 ---------- */
+  section{margin-top:72px;}
+  h2.sec{font-size:39px; color:var(--green); display:flex; align-items:center; gap:16px; margin-bottom:10px;}
+  h2.sec::before{content:""; width:21px; height:39px; background:linear-gradient(var(--gold),var(--green));
+                 border-radius:6px; flex:none;}
+  .sec-sub{color:var(--muted); font-size:21px; margin-bottom:24px; padding-left:37px;}
+  h3{color:var(--green); font-size:28.5px; margin:28px 0 14px;}
+  h4{color:var(--green-l); font-size:24px; margin:18px 0 10px;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px 26px;
+        box-shadow:0 2px 10px rgba(92,64,51,.05); margin-bottom:20px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  table{width:100%; border-collapse:collapse; font-size:22px; background:#fff;}
+  th{background:var(--green); color:#fff; padding:12px 16px; text-align:left; font-weight:600; white-space:nowrap;}
+  td{border-bottom:1px solid var(--line); padding:12px 16px; vertical-align:top;}
+  tr:nth-child(even) td{background:#faf8f2;}
+  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:12px;}
+
+  .src{font-size:18.8px; color:var(--muted);}
+  .src a{color:var(--blue); text-decoration:none;}
+  .ref{display:inline-block; background:var(--gold-l); color:#7a5d00; border-radius:8px;
+       font-size:17.3px; padding:0 8px; margin-left:5px; vertical-align:2px; white-space:nowrap;}
+
+  /* ---------- 交通 SVG ---------- */
+  .route-svg{width:100%; height:auto; display:block;}
+  .flight-box{background:linear-gradient(135deg,#fbf6ea,#f5ecd8); border:1px dashed var(--gold);
+              border-radius:12px; padding:16px 20px; font-size:21px;}
+
+  /* ---------- 地图 ---------- */
+  #map{height:600px; border-radius:14px; border:1px solid var(--line); z-index:1;}
+  .legend{background:#fff; padding:12px 16px; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,.18);
+          font-size:19.5px; line-height:2;}
+  .legend i{display:inline-block; width:14px; height:14px; border-radius:50%; margin-right:8px; vertical-align:-1px;}
+  .map-note{font-size:19.5px; color:var(--muted); margin-top:12px;}
+
+  /* ---------- 逐日行程 ---------- */
+  .day{background:var(--card); border:1px solid var(--line); border-radius:16px; margin-bottom:28px;
+       overflow:hidden; box-shadow:0 2px 10px rgba(92,64,51,.05);}
+  .day-head{background:linear-gradient(90deg,var(--green),var(--green-l)); color:#fff; padding:16px 26px;
+            display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;}
+  .day-head .dno{font-size:33px; font-weight:700; color:var(--gold-l);}
+  .day-head .dt{font-size:19.5px; opacity:.9;}
+  .day-head .dtitle{font-size:25.5px; font-weight:600;}
+  .day-body{padding:20px 26px 22px;}
+  .halves{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
+  @media (max-width:860px){.halves{grid-template-columns:1fr;}}
+  .half{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:#fcfaf5;}
+  .half h5{font-size:21px; color:var(--green); display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .half h5 .ico{flex:none; width:34px; height:34px; border-radius:50%; background:var(--gold-l);
+                display:inline-flex; align-items:center; justify-content:center; font-size:19.5px;}
+  .half ul{list-style:none;}
+  .half li{padding:4px 0 4px 16px; position:relative; font-size:21px;}
+  .half li::before{content:"•"; position:absolute; left:2px; color:var(--gold);}
+  .day-route{margin:16px 0 6px; background:#f5f2e8; border:1px dashed #d5cbb8; border-radius:10px;
+             padding:12px 16px; font-size:20.3px; color:#453c33; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .day-route b{color:var(--green);}
+  .day-tip{margin-top:14px; background:#fdf6e3; border-left:5px solid var(--gold); border-radius:0 8px 8px 0;
+           padding:11px 16px; font-size:20.3px; color:#6b5a1e;}
+  .day-tip b{color:#8a6d00;}
+  .day-tip.alert{background:#fdeeea; border-left-color:var(--red); color:#7a2e1c;}
+  .day-tip.alert b{color:var(--red);}
+  .day.ruili{border:1px solid #d8ceb0;}
+  .day.ruili .day-head{background:linear-gradient(90deg,#7a4a2a,#a06a30);}
+
+  /* ---------- 景点卡与图片集 ---------- */
+  .spot{display:grid; grid-template-columns:360px 1fr; gap:22px; background:#fff; border:1px solid var(--line);
+        border-radius:14px; overflow:hidden; margin-bottom:22px;}
+  @media (max-width:800px){.spot{grid-template-columns:1fr;}}
+  .spot .info{padding:18px 22px 16px;}
+  .spot .info h3{margin-top:0;}
+  .spot .meta{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px;}
+  .chip{background:var(--gold-l); color:#6d5300; font-size:18px; border-radius:999px; padding:3px 14px;}
+  .chip.g{background:#e8efe3; color:#3c5c33;}
+  .chip.b{background:#e3eef5; color:#2f6f8f;}
+  .spot p{font-size:21px; margin:5px 0;}
+  .warn{background:#fdeeea; border-left:5px solid var(--red); padding:10px 14px; border-radius:0 8px 8px 0;
+        font-size:20.3px; margin-top:12px; color:#7a2e1c;}
+  .warn b{color:var(--red);}
+
+  .gal{display:flex; flex-direction:column;}
+  .gal-main{position:relative; aspect-ratio:4/3; background:#efe9dd; overflow:hidden; cursor:zoom-in;}
+  .gal-main img{width:100%; height:100%; object-fit:cover; display:block;}
+  .gal-btn{position:absolute; top:50%; transform:translateY(-50%); width:56px; height:72px; border:none;
+           background:rgba(35,25,18,.45); color:#fff; font-size:42px; line-height:1; cursor:pointer;
+           display:flex; align-items:center; justify-content:center; border-radius:10px; padding:0;}
+  .gal-btn:hover{background:rgba(35,25,18,.7);}
+  .gal-prev{left:8px;} .gal-next{right:8px;}
+  .gal-count{position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,.55); color:#fff;
+             border-radius:10px; padding:2px 14px; font-size:18px;}
+  .gal-hint{position:absolute; left:10px; bottom:10px; background:rgba(0,0,0,.45); color:#fff;
+            border-radius:10px; padding:2px 12px; font-size:16.5px;}
+  .gal-thumbs{display:flex; gap:8px; padding:10px; overflow-x:auto; background:#faf8f2;
+              -webkit-overflow-scrolling:touch; scrollbar-width:thin;}
+  .gal-thumbs img{flex:none; width:96px; height:68px; object-fit:cover; border-radius:8px; cursor:pointer;
+                  opacity:.6; border:2px solid transparent; display:block;}
+  .gal-thumbs img.on{opacity:1; border-color:var(--gold);}
+
+  /* ---------- 灯箱 ---------- */
+  .lb{position:fixed; inset:0; background:rgba(15,10,6,.97); z-index:2000; display:none;
+      align-items:center; justify-content:center; flex-direction:column; padding:20px;}
+  .lb.on{display:flex;}
+  .lb img{max-width:96vw; max-height:82vh; object-fit:contain; border-radius:8px;}
+  .lb .lb-cap{color:#eee; font-size:19.5px; margin-top:14px; text-align:center;}
+  .lb .lb-x{position:absolute; top:6px; right:6px; background:none; border:none; color:#fff;
+            font-size:54px; line-height:1; cursor:pointer; padding:10px 18px;}
+  .lb .lb-btn{position:absolute; top:50%; transform:translateY(-50%); width:64px; height:96px; border:none;
+              background:rgba(255,255,255,.14); color:#fff; font-size:52px; cursor:pointer; border-radius:12px;}
+  .lb .lb-btn:hover{background:rgba(255,255,255,.3);}
+  .lb .lb-prev{left:12px;} .lb .lb-next{right:12px;}
+
+  /* ---------- 美食 ---------- */
+  .food-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .food-card img{width:100%; height:240px; object-fit:cover; display:block;}
+  .food-card .cap{padding:14px 18px; font-size:21px;}
+  .food-card .cap b{color:var(--green); display:block; margin-bottom:6px;}
+
+  /* ---------- 避坑 ---------- */
+  .avoid-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media (max-width:860px){.avoid-grid{grid-template-columns:1fr;}}
+  .avoid-item{background:#fff; border:1px solid #f0d9d2; border-radius:12px; padding:18px 20px;}
+  .avoid-item h4{color:var(--red); margin-top:0;}
+  .avoid-item p{font-size:21px;}
+  .ok{color:#3c5c33; font-weight:600;}
+
+  /* ---------- 清单 ---------- */
+  .pack-cols{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:860px){.pack-cols{grid-template-columns:1fr;}}
+  .pack ul{list-style:none;}
+  .pack li{padding:9px 2px 9px 40px; position:relative; border-bottom:1px dashed var(--line); font-size:22px;}
+  .pack li::before{content:"✔"; position:absolute; left:10px; color:var(--green-l); font-weight:700;}
+  .pack li b{color:var(--green);}
+  .pack li .why{display:block; font-size:18.8px; color:var(--muted);}
+
+  footer{margin-top:80px; padding-top:26px; border-top:1px solid var(--line); font-size:19.5px; color:var(--muted);}
+
+  /* ---------- 手机适配 ---------- */
+  @media (max-width:640px){
+    body{font-size:23px;}
+    .wrap{padding:0 12px 60px;}
+    header.hero{padding:44px 12px 40px;}
+    .hero .pills{gap:8px;}
+    nav.toc .in{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+                padding:10px 12px; gap:6px;}
+    nav.toc .in::-webkit-scrollbar{display:none;}
+    nav.toc a{white-space:nowrap; flex:none; font-size:19.5px; padding:6px 12px;}
+    section{margin-top:52px;}
+    h2.sec{font-size:31px;}
+    h2.sec::before{width:16px; height:31px;}
+    .sec-sub{padding-left:24px; font-size:20.3px;}
+    h3{font-size:25.5px;} h4{font-size:22.5px;}
+    .card{padding:16px 16px; border-radius:12px;}
+    .day-head{padding:12px 16px;}
+    .day-body{padding:14px 16px 16px;}
+    .spot .info{padding:14px 14px 12px;}
+    .gal-main{aspect-ratio:4/3;}
+    .gal-btn{width:46px; height:60px; font-size:36px;}
+    .gal-thumbs img{width:82px; height:58px;}
+    .food-card img{height:200px;}
+    #map{height:440px;}
+    .legend{font-size:16.5px; line-height:1.8;}
+    .hero h1{letter-spacing:1px;}
+  }
+
+  @media print{
+    nav.toc{display:none;} #map{height:420px;}
+    .day,.card,.spot{box-shadow:none; break-inside:avoid;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="tag">边 地 风 物 · 滇 西 慢 游</div>
+  <h1>西安 → 芒市 · 瑞丽 · 腾冲 · 九日之旅
+    <small>金塔银塔 · 一寨两国 · 火山热海 · 和顺银杏 —— 不赶路的滇西行程</small>
+  </h1>
+  <div class="pills">
+    <div class="pill">📅 <b>2026.10.20 – 10.28</b>（9天8晚）</div>
+    <div class="pill">✈️ 芒市进 · <b>腾冲出</b> 直飞不走回头路</div>
+    <div class="pill">🏨 芒市2晚＋瑞丽1晚＋腾冲5晚</div>
+    <div class="pill">🐢 上午＋下午各1活动 · <b>午休2小时</b></div>
+  </div>
+</header>
+
+<nav class="toc"><div class="in">
+  <a href="#overview">总览</a><a href="#traffic">大交通</a><a href="#map">路线地图</a>
+  <a href="#days">逐日行程</a><a href="#spots">景点详单</a><a href="#food">美食</a>
+  <a href="#avoid">避坑指南</a><a href="#tips">游玩建议</a><a href="#packing">行前物品</a>
+  <a href="#budget">预算</a><a href="#sources">资料来源</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ================= 总览 ================= -->
+<section id="overview">
+  <h2 class="sec">行程总览</h2>
+  <p class="sec-sub">以「休闲慢游」为原则：<b>东航冬春航季西安⇌芒市直飞</b>进、<b>腾冲驼峰机场直飞</b>出，全程不走回头路；路线自南向北串起芒市（傣族佛国）→ 瑞丽（中缅边境）→ 腾冲（火山热海与和顺），每天上午、下午各安排一个活动，中午午休约 2 小时；仅 D4 瑞丽→腾冲一段较长车程，已在当日贴士注明。</p>
+  <p class="sec-sub" style="color:#8a6d00;">🍂 <b>季节说明：</b>本计划按 10 月下旬出行编写。<b>若能改到 11 月中下旬（11.20–12.5 为银杏巅峰期<span class="ref">[6]</span>），腾冲将迎来满村金黄的最佳窗口</b>——行程结构完全不用改，只需整体平移日期，并接受住宿涨价与人流增多。10 月下旬去银杏村则是普通绿树村庄（详见景点卡说明）。</p>
+
+  <div class="card">
+    <svg class="route-svg" viewBox="0 0 1470 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="西安到芒市腾冲交通示意">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#c9a227"/>
+        </marker>
+      </defs>
+      <line x1="225" y1="95" x2="740" y2="95" stroke="#c9a227" stroke-width="4.5" stroke-dasharray="15 12" marker-end="url(#arr)"/>
+      <text x="480" y="65" text-anchor="middle" font-size="24" fill="#5c4033" font-weight="bold">✈ 去程：直飞芒市 · 约3小时</text>
+      <text x="480" y="128" text-anchor="middle" font-size="17" fill="#75695e">东航 2025/26 冬春航季新开 · 每日一班[1] · 班次以购票平台为准</text>
+      <line x1="760" y1="185" x2="1245" y2="185" stroke="#8a6d3b" stroke-width="4.5" stroke-dasharray="15 12" marker-end="url(#arr)"/>
+      <text x="1000" y="158" text-anchor="middle" font-size="21" fill="#5c4033" font-weight="bold">✈ 返程：腾冲驼峰机场直飞西安</text>
+      <g>
+        <circle cx="180" cy="95" r="51" fill="#5c4033"/>
+        <text x="180" y="88" text-anchor="middle" font-size="21" fill="#fff">西安</text>
+        <text x="180" y="115" text-anchor="middle" font-size="16.5" fill="#f3e6c2">咸阳机场</text>
+      </g>
+      <g>
+        <circle cx="800" cy="95" r="51" fill="#c9a227"/>
+        <text x="800" y="88" text-anchor="middle" font-size="19.5" fill="#fff">芒市</text>
+        <text x="800" y="113" text-anchor="middle" font-size="16.5" fill="#fff">德宏机场</text>
+      </g>
+      <g>
+        <circle cx="1290" cy="185" r="51" fill="#8a6d3b"/>
+        <text x="1290" y="178" text-anchor="middle" font-size="19.5" fill="#fff">腾冲</text>
+        <text x="1290" y="203" text-anchor="middle" font-size="16.5" fill="#f3e6c2">驼峰机场</text>
+      </g>
+      <text x="800" y="185" text-anchor="middle" font-size="17" fill="#75695e">芒市→瑞丽 约1.5小时 · 芒市→腾冲 约2小时 · 瑞丽→腾冲 约3小时（大巴/商务车，无高铁）[20]</text>
+    </svg>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>日</th><th>日期</th><th>主题</th><th>上午</th><th>下午</th><th>晚上</th></tr>
+    <tr><td><b>D1</b></td><td>10.20 周二</td><td>抵达芒市</td><td>✈ 西安直飞芒市</td><td>入住 · 勐焕银塔</td><td>傣族古镇夜市逛吃</td></tr>
+    <tr><td><b>D2</b></td><td>10.21 周三</td><td>芒市双塔一日</td><td>勐巴娜西珍奇园（孔雀）</td><td>树包塔 · 大金塔看日落</td><td>勐巴娜西美食城</td></tr>
+    <tr><td><b>D3</b></td><td>10.22 周四</td><td>移动瑞丽</td><td>大巴赴瑞丽（约1.5小时）</td><td>一寨两国</td><td>瑞丽市区 · 边城夜色</td></tr>
+    <tr><td><b>D4</b></td><td>10.23 周五</td><td>国门→腾冲</td><td>姐告国门 · 中缅一条街</td><td>商务车赴腾冲（约3小时）⚠</td><td>腾冲市区安顿</td></tr>
+    <tr><td><b>D5</b></td><td>10.24 周六</td><td>热海温泉日</td><td>热海景区（大滚锅）</td><td>热海泡汤（半日休整）</td><td>市区土锅子晚餐</td></tr>
+    <tr><td><b>D6</b></td><td>10.25 周日</td><td>火山＋湿地（同线）</td><td>火山地质公园（热气球可选）</td><td>北海湿地（草排·游船）</td><td>回市区休整</td></tr>
+    <tr><td><b>D7</b></td><td>10.26 周一</td><td>和顺古镇</td><td>移住和顺 · 图书馆·洗衣亭</td><td>古镇深度 · 野鸭湖日落</td><td>古镇夜色（人少时最美）</td></tr>
+    <tr><td><b>D8</b></td><td>10.27 周二</td><td>铭记与秋色</td><td>滇西抗战纪念馆·国殇墓园＋叠水河</td><td>银杏村（10月下旬见说明）</td><td>回市区 · 告别晚餐大救驾</td></tr>
+    <tr><td><b>D9</b></td><td>10.28 周三</td><td>返程</td><td>自然醒 · 手信 · 退房</td><td>✈ 腾冲直飞西安</td><td>— 抵家 —</td></tr>
+  </table></div>
+  <p class="src" style="margin-top:10px;">注：滇西（德宏州、腾冲）属边境管理区，全程身份证随身、检查站常态查验<span class="ref">[11][12]</span>；普通旅游凭身份证即可，无需提前办理边境通行证<span class="ref">[12]</span>。腾冲海拔约 1600 米，10 月下旬早晚约 10–15℃、白天 20℃ 上下，与芒市（低海拔）有温差，行前物品章已按此准备。</p>
+</section>
+
+<!-- ================= 大交通 ================= -->
+<section id="traffic">
+  <h2 class="sec">大交通方案</h2>
+  <p class="sec-sub">「芒市进、腾冲出」的开口行程，全程不走回头路。东航 2025/26 冬春航季（2025 年 10 月底起）新开<b>西安⇌芒市直飞</b>、每日一班<span class="ref">[1]</span>；<b>腾冲驼峰机场有西安直飞航线</b>（班次随航季调整，购票时确认）。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>✈ 去程 · 10.20（周二）</h4>
+      <p style="font-size:22px;">西安咸阳国际机场 → 德宏芒市机场<br>
+      东航直飞（冬春航季每日一班），约 <b>3 小时</b><span class="ref">[1]</span>。</p>
+      <p class="src">芒市机场距市区仅约 7 公里、车程 15 分钟<span class="ref">[8]</span>，落地即达。<b>注意：</b>新航线班次时刻固定，务必尽早购票并确认航季执行情况；若当日班次不合适，备选「西安→昆明中转→芒市」（昆明飞芒市每日约 29 班次，最频密<span class="ref">[2]</span>）。</p>
+    </div>
+    <div class="card">
+      <h4>✈ 返程 · 10.28（周三）</h4>
+      <p style="font-size:22px;">腾冲驼峰机场 → 西安咸阳国际机场<br>
+      选<b>下午起飞</b>班次：上午从容退房、买手信。</p>
+      <p class="src">驼峰机场已开通至西安等地直飞航线，班次以航季与购票平台为准<span class="ref">[3]</span>；若直飞班次不理想，备选昆明中转（昆明飞腾冲约 1 小时，每日多班）。机场距腾冲市区约 10 公里、车程 20 分钟。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>🚌 城际交通（三地无高铁，靠大巴/商务车）</h4>
+    <p style="font-size:22px;">芒市⇌瑞丽：中巴约 57 元/人、小巴约 78 元，车程约 1.5 小时；芒市⇌腾冲：约 78 元/人，约 1.5–2 小时；瑞丽⇌腾冲：商务车约 2.5–3 小时，约 1 小时一班<span class="ref">[20]</span>。</p>
+    <p class="src">购票走微信公众号「德宏交通运输集团」或当地客运站<span class="ref">[20]</span>；三地景点分散，市内建议平台叫车，腾冲火山/湿地/银杏村一线可拼车或包车（签正规合同、确认无购物条款<span class="ref">[4]</span>）。</p>
+  </div>
+</section>
+
+<!-- ================= 地图 ================= -->
+<section id="map">
+  <h2 class="sec">路线地图</h2>
+  <p class="sec-sub">路线自南向北：芒市（D1–D2）→ 瑞丽（D3–D4 上午）→ 腾冲（D4–D8）。下图标注了行程全部点位与备选景点，点按标记可查看名称与安排日；虚线为当日城际/市内车程示意。</p>
+  <div id="map"></div>
+  <p class="map-note">🗺 本地图底图默认使用高德瓦片（国内访问快，需联网加载）；右上角可切换 OSM 底图。若离线打开，地图区仅显示标注点与连线。距离/车程以公路实际里程为准，为约数。</p>
+</section>
+
+<!-- ================= 逐日行程 ================= -->
+<section id="days">
+  <h2 class="sec">逐日行程（以半天为单位）</h2>
+  <p class="sec-sub">节奏：上午一个主活动 → 午餐＋午休约 2 小时 → 下午一个活动 → 晚上轻量安排；<b>不按具体钟点执行，随体感微调</b>。凡较长车程或需要赶班的环节，已在当日贴士中以 ⚠ 红字特别注明。门票提前 1 天线上购买（多数景区实名制）。</p>
+
+  <!-- D1 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D1</span><span class="dt">10.20 周二</span><span class="dtitle">抵达芒市 · 银塔 · 傣族古镇</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">✈</span>上午｜飞行</h5><ul>
+          <li>东航直飞航班起飞，机上约 3 小时<span class="ref">[1]</span></li>
+          <li>机上预下载离线地图与影视</li>
+          <li>落地前确认酒店与次日班车信息</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜银塔初见</h5><ul>
+          <li>落地芒市机场，打车约 15 分钟进城入住（机场距市区仅约 7 公里<span class="ref">[8]</span>）</li>
+          <li>稍事休整后上<b>勐焕银塔</b>（门票约 40 元<span class="ref">[8][9]</span>）：白色塔群＋"天空之镜"倒影池是出片王牌</li>
+          <li>银塔与金塔隔山相望，可先远眺对面的金塔</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜傣族古镇</h5><ul>
+          <li><b>傣族古镇</b>夜市逛吃：金塔白塔夜景灯光＋东南亚风格街巷<span class="ref">[8][9]</span></li>
+          <li>小吃开场：泡鲁达约 10 元、烤猪皮约 5 元<span class="ref">[9]</span></li>
+          <li>早点休息，倒掉旅途疲劳</li>
+        </ul></div>
+      </div>
+      <div class="day-route">✈ 咸阳机场 → 芒市机场 →（车约15分）→ 市区酒店 → 勐焕银塔 → 傣族古镇夜市</div>
+      <div class="day-tip"><b>当日贴士：</b>滇西属边境管理区，<b>身份证全程随身</b>，机场、公路检查站常态查验<span class="ref">[11][12]</span>。芒市较热（低海拔），早晚单衣即可，与后几天腾冲的温差注意。</div>
+    </div>
+  </div>
+
+  <!-- D2 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D2</span><span class="dt">10.21 周三</span><span class="dtitle">珍奇园 · 树包塔 · 大金塔日落</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜勐巴娜西珍奇园</h5><ul>
+          <li>4A 景区，门票约 30–40 元<span class="ref">[8][9]</span>，距市区仅几公里</li>
+          <li><b>散养孔雀</b>开屏、百年铁树王、周总理纪念亭<span class="ref">[8]</span></li>
+          <li>园内慢逛约 2 小时，回城午餐</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜树包塔＋大金塔</h5><ul>
+          <li>午休后先看市区奇观<b>树包塔</b>（免费）：菩提树根包裹佛塔<span class="ref">[10]</span></li>
+          <li>傍晚上<b>勐焕大金塔</b>（门票约 40 元<span class="ref">[8]</span>）：雷崖让山山顶、塔高 76 米，<b>日落与夜景是最佳时段</b></li>
+          <li>金塔俯瞰芒市全景，天黑后金塔亮灯</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜美食城收尾</h5><ul>
+          <li><b>勐巴娜西美食城</b>：傣味手抓饭、撒撇、烤鱼<span class="ref">[9]</span></li>
+          <li>人均三四十元可吃撑<span class="ref">[9]</span></li>
+          <li>回酒店整理行李，明日移动瑞丽</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 芒市酒店 →（车约10分）→ 珍奇园 → 午休 → 树包塔（市区） → 傍晚大金塔日落 → 美食城</div>
+      <div class="day-tip"><b>当日贴士：</b>大金塔与银塔二选一也够味，但一金一白风格迥异、门票各约 40 元，体力允许建议都去（金塔看日落、银塔白天拍倒影）<span class="ref">[10]</span>。进佛塔着装遮肩过膝。</div>
+    </div>
+  </div>
+
+  <!-- D3 -->
+  <div class="day ruili">
+    <div class="day-head"><span class="dno">D3</span><span class="dt">10.22 周四</span><span class="dtitle">移动瑞丽 · 一寨两国</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">🚌</span>上午｜赴瑞丽</h5><ul>
+          <li>早餐后退房，客运站乘班车赴瑞丽（约 57–78 元，车程约 1.5 小时）<span class="ref">[20]</span></li>
+          <li>沿途中缅边境田园风光，检查站备好身份证</li>
+          <li>抵瑞丽入住，午餐尝缅甸风味（甩粑粑、缅甸奶茶）</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜一寨两国</h5><ul>
+          <li><b>一寨两国（银井寨）</b>：国境线穿寨而过，一井两国水、71 号界碑、秋千荡到缅甸上空的打卡点<span class="ref">[3][19]</span></li>
+          <li>寨内傣族村巷慢逛约 2 小时</li>
+          <li>返瑞丽市区休整</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜边城夜色</h5><ul>
+          <li>瑞丽市区江边散步，感受边城节奏</li>
+          <li>晚餐：傣味或缅餐（人均 30–60 元）</li>
+          <li>早点休息，明日移动日</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 芒市 →（班车约1.5小时[20]）→ 瑞丽市区 → 一寨两国（银井） → 回市区</div>
+      <div class="day-tip alert"><b>⚠ 边境纪律（全程适用）：</b>不跨越界碑与边境拦阻设施、不拍摄军事设施与边防哨所、不参与陌生人搭讪的"跨境生意"<span class="ref">[11]</span>；"荡秋千出国"等网红项目以现场安全规定为准。</div>
+    </div>
+  </div>
+
+  <!-- D4 -->
+  <div class="day ruili">
+    <div class="day-head"><span class="dno">D4</span><span class="dt">10.23 周五</span><span class="dtitle">姐告国门 · 移动腾冲</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜姐告国门</h5><ul>
+          <li><b>姐告口岸国门</b>广场打卡：中华人民共和国瑞丽口岸国门<span class="ref">[3][19]</span></li>
+          <li><b>中缅一条街</b>看缅甸特产集市氛围（<b>只逛不买玉</b>，见避坑章）</li>
+          <li>早市边贸气息浓，拍照注意分寸</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜移动腾冲</h5><ul>
+          <li>午餐后即出发：商务车/班车赴腾冲，车程约 <b>2.5–3 小时</b><span class="ref">[20]</span></li>
+          <li>沿途跨过怒江、穿高黎贡山余脉，风景在路上</li>
+          <li>傍晚抵腾冲市区入住，之后连住 5 晚（腾冲 4＋和顺 1）</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜安顿</h5><ul>
+          <li>市区简餐：一碗腾冲饵丝开场</li>
+          <li>超市买次日早餐与热海补给</li>
+          <li>早休息，明日热海主菜</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 瑞丽 →（车约30分）→ 姐告国门 → 回市区午餐 → 商务车约3小时[20] → 腾冲市区酒店</div>
+      <div class="day-tip alert"><b>⚠ 本日是全程最长移动日：</b>瑞丽→腾冲约 3 小时车程，务必<b>午饭后尽早出发</b>、避开天黑走山路段；班车/商务车票提前一天通过「德宏交通运输集团」公众号或客栈代订<span class="ref">[20]</span>。</div>
+    </div>
+  </div>
+
+  <!-- D5 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D5</span><span class="dt">10.24 周六</span><span class="dtitle">热海 · 大滚锅 · 温泉半日</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜热海景区</h5><ul>
+          <li>打车约 20 分钟到<b>热海景区</b>（门票约 50–65 元，含观光车<span class="ref">[5]</span>）</li>
+          <li><b>大滚锅</b>直径 6 米、97℃ 沸泉；沿途蛤蟆嘴、怀胎井、珍珠泉一路热气蒸腾<span class="ref">[3][5]</span></li>
+          <li>吃一串<b>温泉煮蛋/花生</b>是标配体验</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜泡汤休整</h5><ul>
+          <li>午餐＋午休（本日节奏最松）</li>
+          <li>下午选泡：<b>浴谷/美女池温泉</b>套餐约 288 元起，或大滚锅金汤足浴约 40 元<span class="ref">[5]</span>（可选，量力）</li>
+          <li>泡完汤回市区，旅途第 5 天正好满血</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜土锅子晚餐</h5><ul>
+          <li><b>土锅子</b>：火山泥陶锅炭火慢煨 3 小时的腾冲名物<span class="ref">[16][17]</span></li>
+          <li>推荐市区非遗老店（人均约 30–70 元<span class="ref">[16]</span>，好店需提前订）</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 腾冲酒店 →（车约20分）→ 热海景区（上午游园/下午泡汤） → 回市区晚餐</div>
+      <div class="day-tip"><b>当日贴士：</b>热海景区内步道湿滑、硫磺味重，穿防滑鞋、哮喘敏感者量力；泡汤带泳衣（现场可租，自带更卫生）。温泉与"门票"是两套消费，下单看清内容<span class="ref">[5]</span>。</div>
+    </div>
+  </div>
+
+  <!-- D6 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D6</span><span class="dt">10.25 周日</span><span class="dtitle">火山地质公园 · 北海湿地（同线）</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜火山公园</h5><ul>
+          <li>包车/拼车约 30 分钟到<b>火山地质公园</b>（门票约 40 元<span class="ref">[5]</span>）</li>
+          <li>大空山火山锥石阶登顶、柱状节理地貌、火山博物馆<span class="ref">[3][5]</span></li>
+          <li><b>热气球</b>约 300 元/人（可选，天气与当日开飞为准<span class="ref">[5]</span>）</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜北海湿地</h5><ul>
+          <li>火山公园→北海湿地车程约 20 分钟（同方向顺路）</li>
+          <li><b>北海湿地</b>（门票约 55 元，草排＋游船套票约 140 元<span class="ref">[5]</span>）：高原火山堰塞湖浮毯草排</li>
+          <li>乘草排/游船约 1.5 小时，湖面拍照给足时间</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜回市区</h5><ul>
+          <li>回城车程约 40 分钟</li>
+          <li>晚餐：铜瓢牛肉或傣味换口味</li>
+          <li>早休息，步数中等偏多的一天</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 腾冲酒店 →（车约30分）→ 火山地质公园 →（车20分）→ 北海湿地 →（车约40分）→ 回市区</div>
+      <div class="day-tip"><b>当日贴士：</b>火山＋湿地同线配对一天两站，酒店午休以"车上小憩＋湿地乘船歇脚"替代。热气球<b>受风速影响大</b>，购票前先问当日是否开飞、可退再买<span class="ref">[5]</span>。</div>
+    </div>
+  </div>
+
+  <!-- D7 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D7</span><span class="dt">10.26 周一</span><span class="dtitle">和顺古镇（住镇内一晚）</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜移住和顺</h5><ul>
+          <li>退房，打车约 20 分钟到<b>和顺古镇</b>，入住镇内民宿（门票 55 元 7 天有效，<b>部分民宿可代买优惠票或免票</b>，订房时问清<span class="ref">[5]</span>）</li>
+          <li>上午逛核心：<b>和顺图书馆</b>（全国最大乡村图书馆）、洗衣亭、小巷民居</li>
+          <li>石板路慢走，巷子里随处出片</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜古镇深度</h5><ul>
+          <li>午餐后小憩，避开正午</li>
+          <li>弯楼子民居、艾思奇故居、龙潭</li>
+          <li>傍晚<b>野鸭湖</b>看日落倒影（古镇最美时刻）</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜古镇夜色</h5><ul>
+          <li>夜幕后的和顺几乎没了游人，灯笼小巷最美</li>
+          <li>镇内晚餐：刘家大救驾老店等（见美食章）</li>
+          <li>住镇内一晚是和顺的正确打开方式</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 腾冲市区 →（车约20分）→ 和顺古镇（住镇内） · 全天镇内步行</div>
+      <div class="day-tip"><b>当日贴士：</b>和顺商业化评价整体好于多数古镇，但主街餐饮偏游客价，往巷子里走更地道<span class="ref">[3][18]</span>。早晚温差大，镇内夜游加件外套。</div>
+    </div>
+  </div>
+
+  <!-- D8 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D8</span><span class="dt">10.27 周二</span><span class="dtitle">国殇墓园 · 叠水河 · 银杏村</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜铭记历史</h5><ul>
+          <li>退房回市区寄存行李或直接退房转市区酒店</li>
+          <li><b>滇西抗战纪念馆·国殇墓园</b>（免费，约 2 小时，庄重肃穆）<span class="ref">[3][5]</span></li>
+          <li>旁边<b>叠水河瀑布</b>：城市峡谷中的瀑布（约 20 分钟车程内/步行可达）</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜银杏村</h5><ul>
+          <li>包车约 40 分钟到<b>银杏村</b>（固东镇，门票约 30 元<span class="ref">[6]</span>）</li>
+          <li><b>10 月下旬：银杏未黄</b>，看的是火山石古村与农家院；<b>11.20–12.5 才是满村金黄的巅峰期</b><span class="ref">[6]</span></li>
+          <li>若 10 月下旬前往仅作顺路轻量游，心态放平</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜告别晚餐</h5><ul>
+          <li>回市区，入住机场/市区便利酒店</li>
+          <li>告别晚宴：<b>大救驾</b>（炒饵块）＋青龙过海汤<span class="ref">[16]</span></li>
+          <li>回酒店打包行李</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 和顺 → 国殇墓园·叠水河（市区） →（车约40分）→ 银杏村 → 回市区</div>
+      <div class="day-tip"><b>当日贴士：</b>纪念馆周一闭馆风险——按当日公告确认（免费不免票，带身份证）；银杏村秋色强依赖日期<span class="ref">[6]</span>，10 月下旬把它当"火山石古村"看就不失望。</div>
+    </div>
+  </div>
+
+  <!-- D9 -->
+  <div class="day">
+    <div class="day-head"><span class="dno">D9</span><span class="dt">10.28 周三</span><span class="dtitle">返程 · 回西安</span></div>
+    <div class="day-body">
+      <div class="halves">
+        <div class="half"><h5><span class="ico">☀</span>上午｜从容收尾</h5><ul>
+          <li>睡到自然醒，酒店早餐</li>
+          <li>手信：腾宣（宣纸）、普洱茶、真空饵丝、咖啡<span class="ref">[16]</span></li>
+          <li>午饭后退房</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌤</span>下午｜飞行</h5><ul>
+          <li>打车约 20 分钟赴腾冲驼峰机场</li>
+          <li>下午直飞航班起飞，约 3 小时余抵西安</li>
+        </ul></div>
+        <div class="half"><h5><span class="ico">🌙</span>晚上｜到家</h5><ul>
+          <li>咸阳机场落地，轨道/出租回家</li>
+        </ul></div>
+      </div>
+      <div class="day-route">🏨 腾冲市区 →（车约20分）→ 驼峰机场 ✈ 西安咸阳</div>
+      <div class="day-tip"><b>当日贴士：</b>驼峰机场航班受天气（大雾）影响概率高于平原机场，返程日留足机动、关注航司通知；若遇延误，机场滞留有温泉县城可撤。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 景点详单（图片集） ================= -->
+<section id="spots">
+  <h2 class="sec">景点详单（图片集 · 门票 · 交通 · 避雷）</h2>
+  <p class="sec-sub">以下按<b>游玩顺序</b>排列（芒市 → 瑞丽 → 腾冲）。每个景点配 5 张以上照片组成图片集（优先选用游客实拍）：点缩略图或左右按钮切换，点大图可放大查看，手机上可左右滑动翻图。</p>
+
+  <h3>🛕 芒市（D1–D2）</h3>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/jinta-1.jpg" alt="勐焕大金塔夕阳">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/jinta-1.jpg" alt="夕阳下的金塔建筑群" class="on">
+        <img src="assets/img/jinta-2.jpg" alt="龙雕入口">
+        <img src="assets/img/jinta-4.jpg" alt="游客众多（实拍）">
+        <img src="assets/img/jinta-5.jpg" alt="石阶步道上的游客">
+        <img src="assets/img/jinta-3.jpg" alt="绿树掩映金塔">
+        <img src="assets/img/jinta-6.jpg" alt="金塔夜景大门">
+      </div>
+    </div>
+    <div class="info">
+      <h3>勐焕大金塔</h3>
+      <div class="meta"><span class="chip">门票约40元</span><span class="chip g">距市区约7公里</span><span class="chip b">D2 傍晚</span></div>
+      <p>芒市地标：雷崖让山山顶、塔高 76 米、金顶重 2.3 吨，中国南传佛教名塔之一<span class="ref">[8]</span>。<b>日落＋亮灯是最佳时段</b>，可俯瞰芒市全景<span class="ref">[8][10]</span>。与银塔隔山相望。</p>
+      <p class="src">图源：Trip.com、德宏网、亞洲時代周刊等公开图源与游客实拍（侵删）</p>
+      <div class="warn"><b>避雷：</b>景区电瓶车/香火等二次消费按需；着装遮肩过膝；山顶日落时段人多，拍照耐心排队。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/yinta-1.jpg" alt="勐焕银塔天空之镜">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/7</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/yinta-1.jpg" alt="天空之镜倒影与傣装游客（实拍）" class="on">
+        <img src="assets/img/yinta-2.jpg" alt="月牙雕塑打卡点">
+        <img src="assets/img/yinta-7.jpg" alt="金塔银塔水中倒影同框">
+        <img src="assets/img/yinta-4.jpg" alt="金银塔同框远眺">
+        <img src="assets/img/yinta-3.jpg" alt="白塔前拍照的游客">
+        <img src="assets/img/yinta-5.jpg" alt="山顶金塔与白塔">
+        <img src="assets/img/yinta-6.jpg" alt="银塔前的摄影游客">
+      </div>
+    </div>
+    <div class="info">
+      <h3>勐焕银塔</h3>
+      <div class="meta"><span class="chip">门票约40元</span><span class="chip g">与大金塔隔山相望</span><span class="chip b">D1 下午</span></div>
+      <p>白色塔群在阳光下极简出片，<b>"天空之镜"倒影池</b>与月牙雕塑是网红机位<span class="ref">[8][10]</span>；白天拍银塔、傍晚去对面金塔看日落，是最顺的组合<span class="ref">[10]</span>。</p>
+      <p class="src">图源：知乎@渝帆（水印，侵删）、Klook、车家号、Go Travel 等（侵删）</p>
+      <div class="warn"><b>避雷：</b>倒影池拍照人多需排队，注意脚下湿滑；与金塔二选一时，爱拍照选银塔、爱气势选金塔<span class="ref">[10]</span>。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/zhenqiyuan-1.jpg" alt="珍奇园孔雀">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/zhenqiyuan-1.jpg" alt="林间开屏孔雀" class="on">
+        <img src="assets/img/zhenqiyuan-2.jpg" alt="周总理纪念亭（游客实拍）">
+        <img src="assets/img/zhenqiyuan-3.jpg" alt="园区大门与游客">
+        <img src="assets/img/zhenqiyuan-4.jpg" alt="入口另一角度">
+        <img src="assets/img/zhenqiyuan-5.jpg" alt="热带植物园区">
+      </div>
+    </div>
+    <div class="info">
+      <h3>勐巴娜西珍奇园</h3>
+      <div class="meta"><span class="chip">门票约30–40元</span><span class="chip g">市区几公里内</span><span class="chip b">D2 上午</span></div>
+      <p>国家 4A 景区：<b>散养孔雀</b>踱步开屏、百年铁树王、珍稀植物与奇石，周总理纪念亭是园内经典机位<span class="ref">[8]</span>。慢逛约 2 小时，节奏轻松。</p>
+      <p class="src">图源：百度百科、搜狐、什么值得买、携程（侵删）</p>
+      <div class="warn"><b>避雷：</b>规模中等，把它当"芒市晨间散步＋孔雀园"即可，预期别拉太高<span class="ref">[8]</span>；勿投喂孔雀。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/guzhen-1.jpg" alt="傣族古镇夜景">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/guzhen-1.jpg" alt="古镇不夜城夜景" class="on">
+        <img src="assets/img/guzhen-2.jpg" alt="日夜拼接连片金塔白塔">
+        <img src="assets/img/guzhen-3.jpg" alt="游客四宫格打卡">
+        <img src="assets/img/guzhen-4.jpg" alt="四格：金塔/树包塔/街景">
+        <img src="assets/img/guzhen-5.jpg" alt="树包塔奇观">
+      </div>
+    </div>
+    <div class="info">
+      <h3>傣族古镇（夜市）＋ 树包塔</h3>
+      <div class="meta"><span class="chip">免费</span><span class="chip g">市区内</span><span class="chip b">D1 晚 / D2 下午</span></div>
+      <p>新建的傣式文旅小镇：夜晚金塔白塔亮灯、东南亚风情街巷与美食云集，<b>泡鲁达约 10 元、烤猪皮约 5 元</b>，人均三四十吃到扶墙<span class="ref">[9]</span>。市区的<b>树包塔</b>（免费）是菩提树根包裹佛塔的百年奇观<span class="ref">[10]</span>，白天顺路一看。</p>
+      <p class="src">图源：永安旅遊、Trip.com、抖音百科（侵删）</p>
+      <div class="warn"><b>避雷：</b>古镇属新建商业街区，买的是氛围不是古建；夜市小摊先问价再下手。</div>
+    </div>
+  </div>
+
+  <h3>🛂 瑞丽（D3–D4 上午）</h3>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/yizhai-1.jpg" alt="一寨两国界碑">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/8</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/yizhai-1.jpg" alt="71号界碑（1960）" class="on">
+        <img src="assets/img/yizhai-5.jpg" alt="一寨两国水井游客合影">
+        <img src="assets/img/yizhai-2.jpg" alt="缅甸芒秀寨指示墙">
+        <img src="assets/img/yizhai-3.jpg" alt="缅甸地图塔">
+        <img src="assets/img/yizhai-8.jpg" alt="中国地图地球塔顶">
+        <img src="assets/img/yizhai-4.jpg" alt="红砖佛塔群">
+        <img src="assets/img/yizhai-7.jpg" alt="水中倒映的佛塔">
+        <img src="assets/img/yizhai-6.jpg" alt="水井石碑特写">
+      </div>
+    </div>
+    <div class="info">
+      <h3>一寨两国（银井寨）</h3>
+      <div class="meta"><span class="chip">门票约30元（以现场为准）</span><span class="chip g">瑞丽市区约11公里</span><span class="chip b">D3 下午</span></div>
+      <p>国境线从傣族村寨中穿过：一井两国水、71 号界碑、"一塔佑两国"石碑、中缅两国地标塔对望——一个寨子里体验两个国家的奇特日常<span class="ref">[3][19]</span>。</p>
+      <p class="src">图源：行客旅游网、百度百科、搜狐、夢想家自組隊、潮新闻、知乎等（侵删）</p>
+      <div class="warn"><b>避雷：</b>景区经过商业化整修，"秋千荡出国"等打卡点排队且以现场安全规定为准；<b>界碑与边境拦阻设施不翻越、不移动</b>，军事设施不拍摄<span class="ref">[11]</span>。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/jiegao-1.jpg" alt="瑞丽口岸国门">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/jiegao-1.jpg" alt="国门正面" class="on">
+        <img src="assets/img/jiegao-3.jpg" alt="国门广场游客">
+        <img src="assets/img/jiegao-2.jpg" alt="国门与横幅">
+        <img src="assets/img/jiegao-4.jpg" alt="口岸街道">
+        <img src="assets/img/jiegao-5.jpg" alt="国门另一角度">
+        <img src="assets/img/jiegao-6.jpg" alt="中缅胞波街集市">
+      </div>
+    </div>
+    <div class="info">
+      <h3>姐告国门 · 中缅一条街</h3>
+      <div class="meta"><span class="chip">免费（广场开放）</span><span class="chip g">瑞丽市区约4公里</span><span class="chip b">D4 上午</span></div>
+      <p>「中华人民共和国瑞丽口岸」国门广场打卡，中缅一条街感受边贸集市氛围<span class="ref">[3][19]</span>——看的是国门气势与两国边民往来的日常，<b>逛氛围、不购物</b>。</p>
+      <p class="src">图源：百度百科、北京日报、广州日报、云南日报、凤凰网（侵删）</p>
+      <div class="warn"><b>避雷：</b>姐告是<b>翡翠玉石市场集中地</b>：赌石外人没有赢面，"满绿""大师工"是营销话术，街边搭讪卖玉一律无视——不懂坚决不买（详见避坑章<span class="ref">[13][14][15]</span>）。</div>
+    </div>
+  </div>
+
+  <h3>🌋 腾冲（D4–D8）</h3>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/rehai-1.jpg" alt="热海大滚锅">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/7</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/rehai-1.jpg" alt="大滚锅沸泉" class="on">
+        <img src="assets/img/rehai-2.jpg" alt="大滚锅蒸汽腾腾">
+        <img src="assets/img/rehai-3.jpg" alt="大滚锅旁的游客（实拍）">
+        <img src="assets/img/rehai-4.jpg" alt="景区拼图：大滚锅与怀胎井">
+        <img src="assets/img/rehai-5.jpg" alt="夜色温泉池">
+        <img src="assets/img/rehai-6.jpg" alt="山林温泉度假村">
+        <img src="assets/img/rehai-7.jpg" alt="温泉泳池石桥">
+      </div>
+    </div>
+    <div class="info">
+      <h3>热海景区（大滚锅 · 温泉）</h3>
+      <div class="meta"><span class="chip">门票约50–65元</span><span class="chip">温泉套餐约288元起</span><span class="chip g">距市区约20分钟</span><span class="chip b">D5 全天</span></div>
+      <p>腾冲地热的招牌：<b>97℃ 的大滚锅</b>沸泉翻涌，沿途蛤蟆嘴、怀胎井、珍珠泉一路白雾蒸腾，温泉煮蛋是标配<span class="ref">[3][5]</span>；下午泡一场浴谷/美女池温泉（约 288 元起）或 40 元金汤足浴<span class="ref">[5]</span>，旅途半程正好满血。</p>
+      <p class="src">图源：知乎、携程、云南旅游、Tripadvisor、什么值得买（侵删）</p>
+      <div class="warn"><b>避雷：</b>门票不含泡汤，温泉是另一套消费、档位多（公共池/汤屋差价大），下单看清内容<span class="ref">[5]</span>；步道湿滑、硫磺味重，防滑鞋＋敏感体质量力。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/huoshan-1.jpg" alt="火山公园热气球">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/huoshan-1.jpg" alt="彩色热气球飞越山林" class="on">
+        <img src="assets/img/huoshan-2.jpg" alt="三只热气球（云雾山间）">
+        <img src="assets/img/huoshan-5.jpg" alt="火山锥与热气球准备（实拍拼图）">
+        <img src="assets/img/huoshan-4.jpg" alt="柱状节理地貌">
+        <img src="assets/img/huoshan-3.jpg" alt="热气球宣传照">
+      </div>
+    </div>
+    <div class="info">
+      <h3>火山地质公园（大空山）</h3>
+      <div class="meta"><span class="chip">门票约40元</span><span class="chip">热气球约300元（可选）</span><span class="chip g">距市区约30分钟</span><span class="chip b">D6 上午</span></div>
+      <p>中国四大火山群之一：大空山火山锥石阶登顶俯瞰、柱状节理地貌奇观、火山博物馆<span class="ref">[3][5]</span>；<b>热气球</b>约 300 元/人（系留飞，天气开飞为准）是滇西独有的高空体验<span class="ref">[5]</span>。</p>
+      <p class="src">图源：文旅头条、腾冲市人民政府、知乎、百度百科（侵删）</p>
+      <div class="warn"><b>避雷：</b>热气球<strong>受风速影响停飞常态</strong>，购票前先问当日是否开飞、确认可退；登大空山是石阶陡坡，量力而行（也可只在山脚看火山地貌）。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/shidi-1.jpg" alt="北海湿地草排">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/7</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/shidi-1.jpg" alt="草排撑杆（游客实拍）" class="on">
+        <img src="assets/img/shidi-4.jpg" alt="草排与小船">
+        <img src="assets/img/shidi-2.jpg" alt="草滩湿地倒影">
+        <img src="assets/img/shidi-5.jpg" alt="水草浮毯全景">
+        <img src="assets/img/shidi-3.jpg" alt="航拍金黄湿地">
+        <img src="assets/img/shidi-6.jpg" alt="栈道与草排">
+        <img src="assets/img/shidi-7.jpg" alt="蓝船穿行草排间">
+      </div>
+    </div>
+    <div class="info">
+      <h3>北海湿地</h3>
+      <div class="meta"><span class="chip">门票约55元</span><span class="chip">草排+游船套票约140元</span><span class="chip g">与火山公园同线</span><span class="chip b">D6 下午</span></div>
+      <p>高原火山堰塞湖湿地，<b>"浮毯"草排</b>漂在湖面是独有景观：踩草排、撑杆划湖、游船穿行，远山白云倒映<span class="ref">[3][5]</span>。与火山公园同方向顺线，一天两站不走回头路。</p>
+      <p class="src">图源：搜狐、新浪、行客旅游网等（侵删）</p>
+      <div class="warn"><b>避雷：</b>门票与草排/游船是分开消费，套票约 140 元<span class="ref">[5]</span>，按兴趣买不必全上；草排体验注意听安全讲解、穿好救生装备。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/heshun-1.jpg" alt="和顺古镇全景">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/9</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/heshun-1.jpg" alt="湖畔古镇全景" class="on">
+        <img src="assets/img/heshun-2.jpg" alt="湖畔倒影">
+        <img src="assets/img/heshun-3.jpg" alt="航拍古村与稻田">
+        <img src="assets/img/heshun-7.jpg" alt="和顺顺和牌坊">
+        <img src="assets/img/heshun-5.jpg" alt="走夷方馆门厅">
+        <img src="assets/img/heshun-6.jpg" alt="古亭稻田与游客">
+        <img src="assets/img/heshun-8.jpg" alt="客栈指示牌街角">
+        <img src="assets/img/heshun-4.jpg" alt="冰清玉洁石牌坊">
+        <img src="assets/img/heshun-1.jpg" alt="荷花与古村">
+      </div>
+    </div>
+    <div class="info">
+      <h3>和顺古镇</h3>
+      <div class="meta"><span class="chip">门票55元（7天有效）</span><span class="chip g">距腾冲市区约20分钟</span><span class="chip b">D7 全天（住镇内）</span></div>
+      <p>600 年西南侨乡、茶马古道重镇：<b>和顺图书馆</b>（全国最大乡村图书馆）、洗衣亭、弯楼子民居、艾思奇故居，火山石巷与野鸭湖落日<span class="ref">[3][5]</span>。<b>住镇内一晚</b>，等游客散去的夜晚才是和顺的本貌。门票 7 天有效，部分镇内民宿可代买优惠票或免票，订房时问清<span class="ref">[5]</span>。</p>
+      <p class="src">图源：行客旅游网、搜狐、和顺古镇（官方）、云南旅游攻略、知乎、文旅头条（侵删）</p>
+      <div class="warn"><b>避雷：</b>主街餐饮偏游客价，往巷子里走更地道<span class="ref">[3][18]</span>；古镇内电瓶车与各馆部另收费与否提前确认，55 元门票仅含古镇进出与部分展馆。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/guoshang-1.jpg" alt="国殇墓园纪念墙">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/guoshang-1.jpg" alt="民族英雄纪念墙" class="on">
+        <img src="assets/img/guoshang-2.jpg" alt="纪念塔与雕塑群">
+        <img src="assets/img/guoshang-3.jpg" alt="戴安澜将军碑刻">
+        <img src="assets/img/dieshui-1.jpg" alt="叠水河瀑布">
+        <img src="assets/img/dieshui-2.jpg" alt="城市峡谷中的瀑布">
+      </div>
+    </div>
+    <div class="info">
+      <h3>滇西抗战纪念馆·国殇墓园 ＋ 叠水河瀑布</h3>
+      <div class="meta"><span class="chip">纪念馆免费（带身份证）</span><span class="chip g">市区内</span><span class="chip b">D8 上午</span></div>
+      <p>中国远征军与滇西抗战的主战场记忆：纪念馆＋国殇墓园庄重肃穆，约 2 小时<span class="ref">[3][5]</span>。旁边的<b>叠水河瀑布</b>是全国少有的城市峡谷瀑布，隔墙即达，一并看完。</p>
+      <p class="src">图源：知乎、搜狐、行客旅游网（侵删）</p>
+      <div class="warn"><b>避雷：</b>免费不免票，带身份证领票；注意周一闭馆风险，出行前按官方公告确认；馆内保持肃静、着装得体。</div>
+    </div>
+  </div>
+
+  <div class="spot">
+    <div class="gal">
+      <div class="gal-main">
+        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
+        <img src="assets/img/yinxing-1.jpg" alt="银杏村航拍">
+        <button class="gal-btn gal-next" aria-label="下一张">›</button>
+        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
+      </div>
+      <div class="gal-thumbs">
+        <img src="assets/img/yinxing-1.jpg" alt="航拍古村银杏" class="on">
+        <img src="assets/img/yinxing-3.jpg" alt="银杏树下围桌的游客（祈福牌）">
+        <img src="assets/img/yinxing-2.jpg" alt="金黄村道">
+        <img src="assets/img/yinxing-4.jpg" alt="石牌坊与银杏">
+        <img src="assets/img/yinxing-5.jpg" alt="金色古村航拍">
+      </div>
+    </div>
+    <div class="info">
+      <h3>银杏村（季节强依赖 ⚠）</h3>
+      <div class="meta"><span class="chip">门票约30元</span><span class="chip g">距腾冲市区约40分钟</span><span class="chip b">D8 下午</span></div>
+      <p>固东镇江东村，三千余株古银杏环抱火山石农家院。<b>2025 年最佳观赏期为 11 月 20 日 – 12 月 5 日</b><span class="ref">[6]</span>——满村金黄、地上铺金，是腾冲一年中的高光。同区域<b>司莫拉佤族村</b>免费但需预约<span class="ref">[6]</span>，可顺路。</p>
+      <p class="src">图源：德宏网、新华网、Trip.com、知乎（侵删）</p>
+      <div class="warn"><b>季节说明（重要）：</b>本计划按 10 月下旬出行，<b>彼时银杏未黄、只是绿树古村</b>——把它当"火山石村落轻量游"即可，不要抱着金黄照片的预期<span class="ref">[6]</span>。若想看本卡图集中的金黄场景，请把整段行程平移到 11 月中下旬（银杏村门票不变、住宿上涨需早订）。</div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <tr><th>景点</th><th>参考门票</th><th>位置</th><th>建议时长</th><th>安排</th></tr>
+    <tr><td>勐焕大金塔</td><td>约40元</td><td>芒市市区约7公里</td><td>2 小时（日落最佳）</td><td>D2 傍晚</td></tr>
+    <tr><td>勐焕银塔</td><td>约40元</td><td>与金塔隔山相望</td><td>1.5–2 小时</td><td>D1 下午</td></tr>
+    <tr><td>勐巴娜西珍奇园</td><td>约30–40元</td><td>芒市近郊</td><td>2 小时</td><td>D2 上午</td></tr>
+    <tr><td>傣族古镇·树包塔</td><td>免费</td><td>芒市市区</td><td>夜逛 2 小时</td><td>D1 晚 / D2</td></tr>
+    <tr><td>一寨两国</td><td>约30元（以现场为准）</td><td>瑞丽约11公里</td><td>2 小时</td><td>D3 下午</td></tr>
+    <tr><td>姐告国门·中缅街</td><td>免费</td><td>瑞丽约4公里</td><td>1.5 小时</td><td>D4 上午</td></tr>
+    <tr><td>热海景区</td><td>约50–65元（温泉另收）</td><td>腾冲约20分钟</td><td>半天＋泡汤</td><td>D5</td></tr>
+    <tr><td>火山地质公园</td><td>约40元（热气球约300元）</td><td>腾冲约30分钟</td><td>2.5 小时</td><td>D6 上午</td></tr>
+    <tr><td>北海湿地</td><td>约55元（套票约140元）</td><td>腾冲城北</td><td>2 小时</td><td>D6 下午</td></tr>
+    <tr><td>和顺古镇</td><td>55元（7天有效）</td><td>腾冲约20分钟</td><td>1 天＋住1晚</td><td>D7</td></tr>
+    <tr><td>滇西抗战纪念馆·国殇墓园</td><td>免费（带身份证）</td><td>腾冲市区</td><td>2 小时</td><td>D8 上午</td></tr>
+    <tr><td>叠水河瀑布</td><td>约20元</td><td>腾冲市区（相邻）</td><td>1 小时</td><td>D8 上午</td></tr>
+    <tr><td>银杏村</td><td>约30元</td><td>腾冲约40分钟</td><td>2–3 小时</td><td>D8 下午（10月下旬未黄）</td></tr>
+    <tr><td>司莫拉佤族村（可选）</td><td>免费需预约</td><td>银杏村方向</td><td>1.5 小时</td><td>—（备选）</td></tr>
+  </table>
+  <p class="src" style="padding:10px 16px;">价格来源：去哪儿门票汇总（2026-09-18）<span class="ref">[5]</span>、去哪儿银杏村报道（2025）<span class="ref">[6]</span>、携程/知乎芒市攻略<span class="ref">[8][9]</span>；均以景区与平台当日公示为准。</p></div>
+</section>
+
+<!-- ================= 美食 ================= -->
+<section id="food">
+  <h2 class="sec">美食清单</h2>
+  <p class="sec-sub">滇西味觉三城记：芒市吃傣味与缅甸小吃、瑞丽吃边贸风味、腾冲吃火山热海系名物。<b>点不了酸辣苦的先跟店家说</b>（撒撇有苦版）。</p>
+
+  <div class="grid3">
+    <div class="food-card"><img src="assets/img/food-dajiujia.jpg" alt="大救驾炒饵块"><div class="cap"><b>大救驾（炒饵块）</b>饵块薄如蝉翼＋酸腌菜火腿爆炒，配"青龙过海汤"；传说救过永历帝故名<span class="ref">[16]</span>。图源：搜狐</div></div>
+    <div class="food-card"><img src="assets/img/food-xidoufen.jpg" alt="稀豆粉"><div class="cap"><b>稀豆粉</b>豌豆吊浆熬制，配油条/烤饵块是本地人早餐标配，人均 10–20 元<span class="ref">[16]</span>。图源：搜狐</div></div>
+    <div class="food-card"><img src="assets/img/food-tuguozi.jpg" alt="土锅子"><div class="cap"><b>土锅子</b>火山泥陶锅炭火慢煨 3 小时，酥肉蛋卷层层码放，"舌尖上的火山热海"<span class="ref">[16][17]</span>。图源：新浪（腾冲文旅）</div></div>
+  </div>
+
+  <h3>🍴 餐厅与小吃据点（口碑依据见来源）</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>店/据点</th><th>位置</th><th>人均</th><th>推荐理由 / 招牌</th></tr>
+    <tr><td><b>刘家大救驾</b></td><td>和顺古镇</td><td>约25–40元</td><td>古镇内大救驾老字号，炒饵块＋青龙过海汤<span class="ref">[16]</span></td></tr>
+    <tr><td><b>木翠稀豆粉</b></td><td>腾冲市区</td><td>约10–20元</td><td>本地人气早餐店，稀豆粉配油条<span class="ref">[16]</span></td></tr>
+    <tr><td><b>边疆缘菜馆</b></td><td>腾冲腾越镇</td><td>约30–70元</td><td>土锅子非遗菜品，火山泥陶锅炭火慢煨<span class="ref">[17]</span></td></tr>
+    <tr><td><b>勐巴娜西美食城</b></td><td>芒市</td><td>约30–40元</td><td>泡鲁达约10元、烤猪皮约5元，傣味手抓饭、撒撇<span class="ref">[9]</span></td></tr>
+    <tr><td><b>傣族古镇夜市</b></td><td>芒市</td><td>随吃随结</td><td>夜市小吃矩阵，人均三四十吃到撑<span class="ref">[9]</span></td></tr>
+    <tr><td><b>瑞丽缅甸风味店</b></td><td>瑞丽市区</td><td>约30–60元</td><td>甩粑粑、缅甸奶茶、傣味烧烤（边贸城市特色<span class="ref">[19]</span>）</td></tr>
+    <tr><td><b>铜瓢牛肉馆</b></td><td>腾冲市区</td><td>约50–80元</td><td>铜瓢炭火牛肉锅，本地人聚餐馆（多店连锁，选排队多的）</td></tr>
+  </table></div>
+  <p class="src" style="margin-top:10px;">名单来源：Trip.com 腾冲美食页（2026-08 更新）<span class="ref">[16]</span>、博客园边疆缘菜馆评测（2026-07）<span class="ref">[17]</span>、知乎芒市攻略<span class="ref">[9]</span>。土锅子好店多需提前电话预订（慢煨 3 小时）<span class="ref">[17]</span>。</p>
+</section>
+
+<!-- ================= 避坑 ================= -->
+<section id="avoid">
+  <h2 class="sec">避坑指南（综合差评与避雷帖）</h2>
+  <p class="sec-sub">以下每一条都来自 2025 年以来公开攻略/差评/报道的交叉印证；滇西的坑高度集中在「低价团」与「玉石」两件事上。</p>
+
+  <div class="avoid-grid">
+    <div class="avoid-item"><h4>🎫 低价购物团：999 元 6 日游类</h4>
+      <p>"999 元云南 6 日游"成本曝光：<b>购物回扣 50% 起步</b>，大量时间耗在翡翠店<span class="ref">[14]</span>；导游施压购物的投诉常年不断<span class="ref">[13]</span>。</p>
+      <p class="ok">✔ 本行程全程自由行＋官方渠道购票；若报一日团，合同必须写明"不进任何购物店"且费用逐项列明<span class="ref">[13][14]</span>。</p></div>
+
+    <div class="avoid-item"><h4>💎 瑞丽赌石与"满绿"话术</h4>
+      <p>姐告玉城与夜市的赌石外人没有赢面；"满绿""大师课/大师工"是典型营销话术<span class="ref">[15]</span>。</p>
+      <p class="ok">✔ <b>不懂玉石坚决不买、赌石坚决不碰</b>；真要买成品：砍价空间约 30–50%、索要权威鉴定证书、看种水不只看颜色<span class="ref">[15]</span>。</p></div>
+
+    <div class="avoid-item"><h4>🧿 街边"缅甸卖玉人"搭讪</h4>
+      <p>姐告/中缅街主动搭讪兜售玉石的"缅甸商人"一律无视<span class="ref">[15]</span>。</p>
+      <p class="ok">✔ 只逛不买是国门街的正确打开方式；对方纠缠就走向人多的铺面或执勤点。</p></div>
+
+    <div class="avoid-item"><h4>🚗 包车与拼车</h4>
+      <p>滇西三地无高铁、景点分散，包车是刚需也是坑点：无合同低价揽客、中途带去购物点的案例多<span class="ref">[4][13]</span>。</p>
+      <p class="ok">✔ 通过客栈/酒店代订或平台预约，<b>签正规合同、写明无购物</b>、费用逐项；旺季报价过低要警惕<span class="ref">[4]</span>。</p></div>
+
+    <div class="avoid-item"><h4>♨️ 热海二次消费叠加</h4>
+      <p>门票约 50–65 元不含泡汤；温泉档位从 40 元足浴到 900 元汤屋跨度大<span class="ref">[5]</span>。</p>
+      <p class="ok">✔ 想省：只泡金汤足浴（约 40 元）；想值：选含餐或含景区交通的套餐，下单前逐项核对。</p></div>
+
+    <div class="avoid-item"><h4>🏠 和顺门票与住宿套路</h4>
+      <p>55 元门票 7 天有效，但部分民宿可代买优惠票甚至免票<span class="ref">[5]</span>；不问就多花。</p>
+      <p class="ok">✔ 订古镇民宿时直接问"是否含接送/门票协助"；主街餐厅偏贵，往巷子里走<span class="ref">[3][18]</span>。</p></div>
+
+    <div class="avoid-item"><h4>🎈 热气球停飞风险</h4>
+      <p>火山公园热气球受风速影响，停飞是常态<span class="ref">[5]</span>。</p>
+      <p class="ok">✔ 到场先问"今天飞不飞"，确认可退款再买票；停飞就改登大空山俯瞰，体验不打折。</p></div>
+
+    <div class="avoid-item"><h4>🍂 银杏村季节错位</h4>
+      <p>10 月下旬－11 月中旬前银杏未黄，"金色银杏"宣传照会造成预期落差<span class="ref">[6]</span>。</p>
+      <p class="ok">✔ 记住窗口：<b>11.20–12.5 巅峰</b><span class="ref">[6]</span>。10 月下旬把银杏村当火山石古村看；或干脆把行程平移到 11 月中下旬。</p></div>
+
+    <div class="avoid-item"><h4>🛂 边境纪律</h4>
+      <p>滇西为边境管理区：不越界碑/拦阻设施、不拍军事设施与哨所、不参与陌生人的"跨境生意"<span class="ref">[11]</span>。</p>
+      <p class="ok">✔ 身份证全程随身（检查站常态查验）<span class="ref">[11][12]</span>；正常旅游无需提前办边境通行证<span class="ref">[12]</span>，如需深入非开放区域可用"移民局12367"APP 办电子通行证<span class="ref">[12]</span>。</p></div>
+
+    <div class="avoid-item"><h4>🌶 饮食与高原温差</h4>
+      <p>傣味酸辣、撒撇有生苦版本，肠胃弱者易不适；腾冲 1600 米海拔早晚仅 10℃ 上下，温差感冒常见。</p>
+      <p class="ok">✔ 点菜先说口味；生食冷盘量力；行李里放一件压缩羽绒/抓绒（见行前物品章）。</p></div>
+  </div>
+</section>
+
+<!-- ================= 游玩建议 ================= -->
+<section id="tips">
+  <h2 class="sec">综合游玩建议</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>⏱ 节奏与体力管理</h4>
+      <ul style="font-size:22px; padding-left:22px;">
+        <li>每天<b>上午、下午各 1 个活动</b>，午休约 2 小时；市区日回酒店午睡，火山＋湿地同线日（D6）以"车上小憩＋乘船歇脚"替代。</li>
+        <li>住宿节奏：芒市 2 晚 → 瑞丽 1 晚 → 腾冲市区 3 晚 → <b>和顺住 1 晚</b>（古镇夜与晨）→ 腾冲市区 1 晚（返程便利），共 8 晚。</li>
+        <li>D4 瑞丽→腾冲约 3 小时是<b>全程唯一长车程</b>，午饭后尽早出发（⚠已标注）。</li>
+        <li>步数最多的是 D6（火山石阶＋湿地）与 D7（和顺全天），穿最舒服的鞋。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🎫 购票与预订时序</h4>
+      <ul style="font-size:22px; padding-left:22px;">
+        <li><b>现在</b>：订机票（芒市进/腾冲出，东航新航线班次固定、尽早锁定<span class="ref">[1]</span>）＋各晚住宿（和顺民宿问清门票协助<span class="ref">[5]</span>）。</li>
+        <li><b>出发前 1–3 天</b>：「德宏交通运输集团」公众号购 D3 芒市→瑞丽、D4 瑞丽→腾冲班车票<span class="ref">[20]</span>；土锅子好店电话订位<span class="ref">[17]</span>。</li>
+        <li><b>每天前一天</b>：线上买次日门票（实名制）；热气球与温泉到场确认后再买<span class="ref">[5]</span>。</li>
+        <li>滇西抗战纪念馆周一闭馆风险，D8 前查官方公告确认。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🛡 安全要点</h4>
+      <ul style="font-size:22px; padding-left:22px;">
+        <li><b>身份证全程随身</b>：边境管理区检查站常态查验；动车/班车同样查证<span class="ref">[11][12]</span>。</li>
+        <li>边境一线：不越界、不拍军事设施、不理会"跨境生意"搭讪<span class="ref">[11]</span>。</li>
+        <li>热海步道湿滑、硫磺气；火山石阶陡峭；草排/游船听从安全讲解。</li>
+        <li>驼峰机场海拔高、多雾，<b>返程日关注航司天气通知</b>，留机动。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>💡 提升体验的小事</h4>
+      <ul style="font-size:22px; padding-left:22px;">
+        <li>芒市与腾冲温差近 10℃：行李按"两季"打包（见行前物品章）。</li>
+        <li>和顺的精华在清晨与夜晚——住镇内才能遇到空巷。</li>
+        <li>热气球想飞请把 D6 排在行程前部的晴天；停飞就改期到场再问。</li>
+        <li>腾冲干燥，保湿霜＋多喝水；紫外线强，防晒照旧。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 行前物品 ================= -->
+<section id="packing">
+  <h2 class="sec">行前物品清单</h2>
+  <p class="sec-sub">常规旅行用品不赘述，以下为<b>去滇西（芒市·瑞丽·腾冲）特别要注意带的</b>：</p>
+  <div class="pack card">
+    <div class="pack-cols">
+      <div>
+        <ul>
+          <li><b>身份证（重中之重）</b><span class="why">边境管理区全程查验、纪念馆领票、班车乘车都要用<span class="ref">[11][12]</span></span></li>
+          <li><b>两季衣装：夏装＋压缩羽绒/抓绒外套</b><span class="why">芒市低海拔仍温暖，腾冲 1600 米早晚 10℃ 上下，同一次行程穿两季</span></li>
+          <li><b>泳衣＋速干毛巾</b><span class="why">热海泡汤/足浴必备，现场可租但自带卫生</span></li>
+          <li><b>防滑舒适步行鞋</b><span class="why">热海湿滑步道、火山石阶、和顺石板路</span></li>
+          <li><b>防晒三件套（帽/墨镜/SPF50+）</b><span class="why">高原紫外线强</span></li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><b>保温杯</b><span class="why">云南习惯喝热水，温泉日补水也靠它</span></li>
+          <li><b>肠胃药＋感冒药＋个人常用药</b><span class="why">酸辣傣味＋早晚温差双考验</span></li>
+          <li><b>少量现金（200–300元零钱）</b><span class="why">瑞丽集市、乡镇摊贩、班车补票常用</span></li>
+          <li><b>充电宝（1万毫安以上）</b><span class="why">拍照、购票、叫车全靠手机</span></li>
+          <li><b>雨伞/轻雨衣</b><span class="why">滇西秋季有阵雨，晴雨两用</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="src" style="margin-top:14px;">玉石不建议购买（见避坑章）；如确有需求，回昆明正规商场比边城稳妥<span class="ref">[15]</span>。</p>
+  </div>
+</section>
+
+<!-- ================= 预算 ================= -->
+<section id="budget">
+  <h2 class="sec">预算参考（单人 · 9 天）</h2>
+  <div class="tbl-wrap"><table>
+    <tr><th>项目</th><th>估算</th><th>说明</th></tr>
+    <tr><td>往返机票</td><td>约 1200–2400 元</td><td>西安⇌芒市直飞（新航线，尽早锁价<span class="ref">[1]</span>）＋腾冲⇌西安直飞；备选昆明中转</td></tr>
+    <tr><td>住宿（8 晚）</td><td>约 1200–2600 元</td><td>芒市约 150–300 元/晚×2＋瑞丽×1＋腾冲市区×3＋和顺民宿×1＋市区×1；11 月中下旬银杏季上浮需早订<span class="ref">[6]</span></td></tr>
+    <tr><td>门票+体验</td><td>约 350–700 元</td><td>必去门票合计约 335–395 元<span class="ref">[5][6][8][9]</span>；热气球约 300 或温泉约 288 二选一（可选）</td></tr>
+    <tr><td>餐饮</td><td>约 800–1300 元</td><td>9 天每天 90–140 元（含土锅子、大救驾等正餐）</td></tr>
+    <tr><td>市内+城际交通</td><td>约 600–800 元</td><td>城际班车/商务车（57–78 元/段<span class="ref">[20]</span>）＋市内打车＋火山湿地银杏村拼包车</td></tr>
+    <tr><td>手信+弹性</td><td>约 300–500 元</td><td>腾宣/茶叶/咖啡/真空饵丝</td></tr>
+    <tr><td><b>合计（不含大交通）</b></td><td><b>约 3300–4900 元</b></td><td>滇西整体物价低于热门大理丽江线；若平移到 11 月中下旬银杏季，住宿预算上浮约 30–50%<span class="ref">[6]</span></td></tr>
+  </table></div>
+</section>
+
+<!-- ================= 来源 ================= -->
+<section id="sources">
+  <h2 class="sec">资料来源</h2>
+  <p class="sec-sub">本计划全部事实性信息（航线、价格、班次、距离、避雷点、餐厅口碑）均来自以下公开来源，发布/检索可见日期均在 <b>2025 年 1 月 1 日之后</b>，检索日期 2026-09-28。标注"站内文章"的条目因平台反爬未取得直链，可按标题在对应平台检索原文核对。</p>
+  <div class="card">
+    <ol style="font-size:21px; padding-left:28px; line-height:2.1;">
+      <li>中国民航报/民航资源网·《东航 2025/26 冬春航季航班计划：西北分公司新增西安—芒市直飞航线（每日一班）》，2025-09 — 站内报道（caacnews.com.cn 可按标题检索）</li>
+      <li>FlightConnections·芒市机场（LUM）航线数据（昆明/成都为最频密出发地，2026-09 检索）— 站内数据页</li>
+      <li>Trip.com·《騰沖-瑞麗-和順 5 日遊超詳細行程攻略必收藏》，2025-03-01 — 站内攻略（芒市→瑞丽→腾冲路线、景点组合）</li>
+      <li>淘宝旅行·《騰沖+瑞麗+芒市定製遊 25 年全網最全自由行攻略＋包車避坑指南》，2025-09-13 — 站内攻略（包车合同/无购物条款）</li>
+      <li>去哪儿旅游资讯·《腾冲 3 天 2 夜四人预算 3000 元，火山热海古镇怎么串？》，2026-09-18 — 站内文章（热海 50–65/和顺 55/火山 40/湿地 55/热气球 300/温泉 288 等门票汇总）</li>
+      <li>去哪儿旅游资讯·《腾冲银杏村 11 月 20 日进入巅峰期，门票 30 元可赏秋》，2025 — 站内文章（银杏季 11.20–12.5、门票 30、司莫拉免费需预约）</li>
+      <li>Trip.com·《芒市＋腾冲＋瑞丽終極新手攻略：機票、住宿、交通及 10 日行程》，2025 — 站内攻略</li>
+      <li>携程攻略社区·《2026 芒市旅游攻略》（动态页，2026-09 检索）— 站内页面（大金塔 40 元/距市区 7 公里、珍奇园 4A、行程建议）</li>
+      <li>知乎专栏·《人均 1500 元玩转芒市》（银塔约 40 元、勐巴娜西美食城物价、傣族古镇人均消费）— <a href="https://zhuanlan.zhihu.com/p/1898867051419922450" target="_blank">zhuanlan.zhihu.com/p/1898867051419922450</a></li>
+      <li>去哪儿旅游资讯·《芒市树包塔四天三夜，先去银塔还是金塔？》— 站内文章（金塔日落/银塔天空之镜的组合玩法）</li>
+      <li>Trip.com·《雲南芒市｜黎明之城，中緬邊境的東南亞風佛國》，2026-04-30 — 站内攻略（边境带身份证、检查站、不拍军事设施提示）</li>
+      <li>国家移民管理局·《电子边境管理区通行证签发服务指南》，2026-04-14 — 官方发布（2026-04-15 起全国启用电子边境通行证；普通旅游凭身份证通行）</li>
+      <li>搜狐·《全国旅游资源第一省，为何变成了人人避之不及的地方？》，2026-09-17 — 站内评论（低价团/强制购物/玉石骗局乱象综述）</li>
+      <li>什么值得买·《999 元云南 6 日游成本曝光：购物回扣 50% 起步》— 站内文章</li>
+      <li>行家攻略·《云南翡翠哪里买最划算：市场选择＋避坑要点》，2025 年发布 — 站内文章（瑞丽原石/腾冲成品定位；砍价 30–50%、验证书、警惕"满绿""大师课"）</li>
+      <li>Trip.com·腾冲美食页（Ginkgo Village 等，2026-08 更新）— 站内页面（大救驾/稀豆粉/土锅子推荐店与人均）</li>
+      <li>博客园·《分享边疆缘菜馆怎么样，靠谱推荐与性价比详解》，2026-07-20 — 站内评测（土锅子非遗、火山泥陶锅炭火慢煨 3 小时）</li>
+      <li>新浪旅游·《腾冲旅游需要几天？3 种方案＋景点组合＋费用避坑全攻略＋FAQ》，2026 年发布 — 站内文章（天数方案与费用口径）</li>
+      <li>欣欣旅游·《云南边境游｜芒市、瑞丽、腾冲超详细攻略》— 站内攻略（一寨两国/姐告看点、边境注意事项）</li>
+      <li>汽车之家·腾冲⇌芒市巴士 78 元/人等城际交通信息（2025 年发布，辅以"德宏交通运输集团"公众号购票口径）— 站内图文</li>
+    </ol>
+    <p class="src" style="margin-top:16px;">
+      ℹ️ 说明：①小红书站内笔记需登录访问且当日检索受限，本计划以可公开核验的平台内容为准；出行前建议在小红书 App 内按「腾冲 避雷」「瑞丽 玉石 避坑」「芒市 攻略」按最新排序再刷一遍近期帖子。②所有门票/票价均为参考价，以景区与平台当日公示为准；航线班次以航司与购票平台实时为准。③文中图片共 77 张，来自公开网络（图注已注明来源平台，优先选用游客实拍视角，仅作行程展示用，版权归原作者；如有侵权请联系删除）。
+    </p>
+  </div>
+</section>
+
+<footer>
+  📍 计划生成于 2026-09-28 · 信息检索截至当日 · 适用于 2026-10-20 至 10-28 出行窗口（9 天 8 晚，芒市进·腾冲出）<br>
+  🍂 想看银杏金黄：将行程整体平移至 11 月中下旬（最佳 11.20–12.5），结构无需改动。<br>
+  本文件为个人行程规划用途；出行前请再次核对航班、班车、门票与开放时间。
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ================= 景点图片集：缩略图切换 / 左右按钮 / 触摸滑动 / 灯箱放大 ================= */
+(function(){
+  var lb = document.createElement('div');
+  lb.className = 'lb';
+  lb.innerHTML = '<button class="lb-x" aria-label="关闭">×</button>'+
+                 '<button class="lb-btn lb-prev" aria-label="上一张">‹</button>'+
+                 '<img src="" alt="">'+
+                 '<button class="lb-btn lb-next" aria-label="下一张">›</button>'+
+                 '<div class="lb-cap"></div>';
+  document.body.appendChild(lb);
+  var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
+  var cur = null;
+
+  function lbUpd(){
+    var it = cur.items[cur.idx];
+    lbImg.src = it.src; lbImg.alt = it.alt;
+    lbCap.textContent = it.cap + '（' + (cur.idx + 1) + '/' + cur.items.length + '）';
+  }
+  function lbMove(d){
+    cur.idx = (cur.idx + d + cur.items.length) % cur.items.length;
+    cur.go(cur.idx); lbUpd();
+  }
+  function lbClose(){ lb.classList.remove('on'); cur = null; }
+  lb.querySelector('.lb-x').addEventListener('click', lbClose);
+  lb.querySelector('.lb-prev').addEventListener('click', function(){ lbMove(-1); });
+  lb.querySelector('.lb-next').addEventListener('click', function(){ lbMove(1); });
+  lb.addEventListener('click', function(e){ if(e.target === lb || e.target === lbCap) lbClose(); });
+  document.addEventListener('keydown', function(e){
+    if(!lb.classList.contains('on')) return;
+    if(e.key === 'Escape') lbClose();
+    else if(e.key === 'ArrowLeft') lbMove(-1);
+    else if(e.key === 'ArrowRight') lbMove(1);
+  });
+  var lbx = null;
+  lb.addEventListener('touchstart', function(e){ lbx = e.touches[0].clientX; }, {passive:true});
+  lb.addEventListener('touchend', function(e){
+    if(lbx === null) return;
+    var dx = e.changedTouches[0].clientX - lbx;
+    if(Math.abs(dx) > 40) lbMove(dx < 0 ? 1 : -1);
+    lbx = null;
+  }, {passive:true});
+
+  document.querySelectorAll('.gal').forEach(function(gEl){
+    var mainImg = gEl.querySelector('.gal-main img');
+    var count = gEl.querySelector('.gal-count');
+    var strip = gEl.querySelector('.gal-thumbs');
+    var thumbs = [].slice.call(strip.querySelectorAll('img'));
+    var items = thumbs.map(function(t){ return {src:t.getAttribute('src'), alt:t.alt, cap:t.alt}; });
+    var idx = 0;
+
+    function go(i){
+      idx = (i + items.length) % items.length;
+      mainImg.src = items[idx].src;
+      mainImg.alt = items[idx].alt;
+      count.textContent = (idx + 1) + '/' + items.length;
+      thumbs.forEach(function(t, j){ t.classList.toggle('on', j === idx); });
+      var el = thumbs[idx];
+      strip.scrollLeft = el.offsetLeft - strip.offsetWidth / 2 + el.offsetWidth / 2;
+    }
+    thumbs.forEach(function(t, j){ t.addEventListener('click', function(){ go(j); }); });
+    gEl.querySelector('.gal-prev').addEventListener('click', function(){ go(idx - 1); });
+    gEl.querySelector('.gal-next').addEventListener('click', function(){ go(idx + 1); });
+    mainImg.addEventListener('click', function(){
+      cur = {items:items, go:go, idx:idx};
+      lb.classList.add('on'); lbUpd();
+    });
+    var sx = null;
+    gEl.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, {passive:true});
+    gEl.addEventListener('touchend', function(e){
+      if(sx === null) return;
+      var dx = e.changedTouches[0].clientX - sx;
+      if(Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+      sx = null;
+    }, {passive:true});
+    go(0);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  // ---------- 坐标系处理：高德底图为 GCJ-02，标记点存 WGS-84，按底图动态换算 ----------
+  function wgs2gcj(lat,lng){
+    var a=6378245.0, ee=0.00669342162296594323;
+    function tLat(x,y){var r=-100+2*x+3*y+0.2*y*y+0.1*x*y+0.2*Math.sqrt(Math.abs(x));
+      r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;
+      r+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;
+      r+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3; return r;}
+    function tLng(x,y){var r=300+x+2*y+0.1*x*x+0.1*x*y+0.1*Math.sqrt(Math.abs(x));
+      r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;
+      r+=(20*Math.sin(x*Math.PI)+40*Math.sin(x/3*Math.PI))*2/3;
+      r+=(150*Math.sin(x/12*Math.PI)+300*Math.sin(x/30*Math.PI))*2/3; return r;}
+    var dLat=tLat(lng-105,lat-35), dLng=tLng(lng-105,lat-35);
+    var radLat=lat/180*Math.PI, magic=Math.sin(radLat);
+    magic=1-ee*magic*magic; var sqrtMagic=Math.sqrt(magic);
+    dLat=(dLat*180)/((a*(1-ee))/(magic*sqrtMagic)*Math.PI);
+    dLng=(dLng*180)/(a/sqrtMagic*Math.cos(radLat)*Math.PI);
+    return [lat+dLat, lng+dLng];
+  }
+  var useGCJ = true;
+  function cv(lat,lng){ return useGCJ ? wgs2gcj(lat,lng) : [lat,lng]; }
+
+  var map = L.map('map',{scrollWheelZoom:true}).setView([24.55,98.25],8);
+  var amap = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{
+    maxZoom:17, subdomains:'1234', attribution:'&copy; 高德地图'
+  });
+  var osmDe = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png',{
+    maxZoom:17, attribution:'&copy; OpenStreetMap contributors'
+  });
+  amap.addTo(map);
+  L.control.layers({'高德底图(默认)':amap,'OSM底图(海外镜像)':osmDe}).addTo(map);
+  map.on('baselayerchange', function(){
+    useGCJ = !useGCJ;
+    feats.forEach(function(f){
+      if(f.poly) f.obj.setLatLngs(f.segs.map(function(s){return cv(s[0],s[1]);}));
+      else f.obj.setLatLng(cv(f.lat,f.lng));
+    });
+  });
+
+  var mangshi='#8a6d3b', tengchong='#2f6f8f', opt='#8a8f8a', feats=[];
+  function addPt(lat,lng,title,desc,color,radius){
+    var obj = L.circleMarker(cv(lat,lng),{radius:radius||8,color:'#fff',fillColor:color,fillOpacity:.95,weight:2})
+      .addTo(map).bindPopup('<b>'+title+'</b><br>'+desc);
+    feats.push({lat:lat,lng:lng,obj:obj});
+    return obj;
+  }
+  addPt(24.4270,98.6010,'🏨 芒市住宿大本营','D1–D2 连住 2 晚','#c9a227',11);
+  var pts = [
+    // 芒市
+    [24.3950,98.5840,'芒市机场','D1 落地 · 距市区约7公里','#b3432b'],
+    [24.4280,98.5980,'勐焕银塔','D1 下午 · 约40元',mangshi],
+    [24.4330,98.5940,'勐焕大金塔','D2 傍晚日落 · 约40元',mangshi],
+    [24.4370,98.5870,'勐巴娜西珍奇园','D2 上午 · 约30–40元',mangshi],
+    [24.4300,98.5980,'傣族古镇·树包塔','D1 晚 / D2 · 免费',mangshi],
+    // 瑞丽
+    [23.9960,97.8480,'瑞丽市区','D3 住 1 晚','#a06a30'],
+    [23.9280,97.8460,'一寨两国（银井）','D3 下午 · 约30元',mangshi],
+    [23.9770,97.8580,'姐告国门·中缅街','D4 上午 · 免费（只逛不买玉）','#a06a30'],
+    // 腾冲
+    [25.0300,98.4950,'腾冲市区住宿','D4–D6、D8 共 5 晚','#c9a227'],
+    [25.0220,98.4990,'和顺古镇','D7 全天住镇内 · 55元','#2f6f8f'],
+    [24.9250,98.4660,'热海景区','D5 全天 · 50–65元',tengchong],
+    [25.1320,98.4770,'火山地质公园','D6 上午 · 约40元',tengchong],
+    [25.1230,98.5380,'北海湿地','D6 下午 · 约55元',tengchong],
+    [25.0210,98.5120,'滇西抗战纪念馆·叠水河','D8 上午 · 免费',tengchong],
+    [25.4390,98.4420,'银杏村（10月下旬未黄）','D8 下午 · 约30元',tengchong],
+    [25.0410,98.4990,'腾冲驼峰机场','D9 返程 · 距市区约10公里','#b3432b']
+  ];
+  pts.forEach(function(p){ addPt(p[0],p[1],p[2],p[3],p[4]); });
+
+  // 城际/当日车程示意（虚线）
+  var segs = [
+    [[24.4270,98.6010],[23.9960,97.8480]],   // 芒市→瑞丽 D3
+    [[23.9960,97.8480],[25.0300,98.4950]],   // 瑞丽→腾冲 D4
+    [[25.0300,98.4950],[25.1320,98.4770]],   // 市区→火山 D6
+    [[25.0300,98.4950],[24.9250,98.4660]],   // 市区→热海 D5
+    [[25.0300,98.4950],[25.0220,98.4990]],   // 市区→和顺 D7
+    [[25.0300,98.4950],[25.4390,98.4420]]    // 市区→银杏村 D8
+  ];
+  segs.forEach(function(seg){
+    var obj = L.polyline([seg[0],seg[1]].map(function(s){return cv(s[0],s[1]);}),
+              {color:'#c9a227',weight:2.5,dashArray:'8 8',opacity:.75}).addTo(map);
+    feats.push({poly:true,segs:[seg[0],seg[1]],obj:obj});
+  });
+
+  var legend = L.control({position:'bottomright'});
+  legend.onAdd = function(){
+    var d = L.DomUtil.create('div','legend');
+    d.innerHTML = '<i style="background:#c9a227"></i>住宿据点（芒市2/瑞丽1/腾冲5）<br>'+
+                  '<i style="background:#8a6d3b"></i>芒市·瑞丽景点 &nbsp;<i style="background:#2f6f8f"></i>腾冲景点<br>'+
+                  '<i style="background:#b3432b"></i>机场 &nbsp;<i style="background:#a06a30"></i>瑞丽边境点<br>'+
+                  '<span style="color:#7a5d00">- - - 虚线：城际/当日车程示意</span>';
+    return d;
+  };
+  legend.addTo(map);
+  setTimeout(function(){ map.invalidateSize(); }, 300);
+})();
+</script>
+</body>
+</html>

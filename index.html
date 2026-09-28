@@ -3,1325 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>西安 → 西双版纳 · 十日休闲之旅（2026.10.20 – 10.29）</title>
-<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.css"/>
-<script src="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<title>旅行计划书架 · 选择一份攻略出发</title>
 <style>
   :root{
-    --green:#1b4d3e; --green-l:#2e7d5b; --gold:#c9a227; --gold-l:#f3e6c2;
-    --ink:#26302b; --muted:#6b7770; --bg:#f6f4ec; --card:#ffffff;
-    --red:#b3432b; --blue:#2f6f8f; --line:#e4e0d2;
+    --green:#1b4d3e; --brown:#5c4033; --gold:#c9a227; --gold-l:#f3e6c2;
+    --ink:#26302b; --muted:#9aa89f;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   a{overflow-wrap:anywhere;}
-  body{font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif; background:var(--bg); color:var(--ink);
-       font-size:24px; line-height:1.75;}
-  .wrap{max-width:1180px; margin:0 auto; padding:0 22px 80px;}
-
-  /* ---------- 封面 ---------- */
-  header.hero{
-    background:linear-gradient(135deg,#123c30 0%,#1b4d3e 55%,#2e7d5b 100%);
-    color:#fff; padding:72px 22px 64px; text-align:center; position:relative; overflow:hidden;
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    background:radial-gradient(1200px 600px at 20% -10%, #1d4034 0%, transparent 55%),
+               radial-gradient(1000px 700px at 90% 110%, #4a3320 0%, transparent 55%),
+               linear-gradient(160deg,#101d18 0%, #131f1b 45%, #191410 100%);
+    color:#f0ede4; min-height:100vh; overflow-x:hidden;
+    font-size:24px; line-height:1.7;
   }
-  header.hero::after{
-    content:""; position:absolute; inset:auto -60px -120px -60px; height:220px;
-    background:radial-gradient(circle at 15% 0%, rgba(201,162,39,.35), transparent 55%),
-               radial-gradient(circle at 85% 20%, rgba(201,162,39,.25), transparent 50%);
+
+  /* ---------- 顶部 ---------- */
+  header.top{ text-align:center; padding:64px 16px 8px; position:relative; z-index:2;}
+  .tag{display:inline-block; border:1px solid rgba(240,237,228,.35); border-radius:999px;
+       padding:5px 24px; font-size:19px; letter-spacing:6px; color:#e7e2d2; margin-bottom:20px;}
+  header.top h1{font-size:clamp(34px,5.2vw,54px); letter-spacing:4px; font-weight:700;}
+  header.top p.sub{margin-top:12px; font-size:21px; color:var(--muted); letter-spacing:2px;}
+  header.top .hint{margin-top:26px; font-size:18.8px; color:#c9b98a;}
+
+  /* ---------- 立体轮播 ---------- */
+  .stage{
+    position:relative; height:640px; margin-top:34px; z-index:1;
+    perspective:1500px; user-select:none;
   }
-  .hero .tag{display:inline-block; border:1px solid rgba(255,255,255,.45); border-radius:999px;
-             padding:5px 24px; font-size:20px; letter-spacing:6px; margin-bottom:22px;}
-  .hero h1{font-size:clamp(39px,6.7vw,66px); letter-spacing:2px; font-weight:700;}
-  .hero h1 small{display:block; font-size:.45em; font-weight:400; letter-spacing:6px; margin-top:12px; opacity:.85;}
-  .hero .pills{margin-top:30px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;}
-  .hero .pill{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
-              border-radius:14px; padding:10px 22px; font-size:21px;}
-  .hero .pill b{color:var(--gold-l); font-weight:600;}
+  .track{
+    position:absolute; inset:0; transform-style:preserve-3d;
+    transition:transform .65s cubic-bezier(.22,.61,.36,1);
+  }
+  .card{
+    position:absolute; top:50%; left:50%; width:430px; height:560px; margin:-280px 0 0 -215px;
+    border-radius:20px; overflow:hidden; cursor:pointer;
+    background:#fff; color:var(--ink);
+    box-shadow:0 30px 60px rgba(0,0,0,.45), 0 4px 14px rgba(0,0,0,.35);
+    transform-style:preserve-3d; backface-visibility:hidden;
+    transition:transform .65s cubic-bezier(.22,.61,.36,1), opacity .65s, filter .65s;
+    text-decoration:none; display:flex; flex-direction:column;
+  }
+  .card .cover{ position:relative; height:58%; overflow:hidden; background:#20242a; flex:none;}
+  .card .cover img{width:100%; height:100%; object-fit:cover; display:block; transform:scale(1.02); transition:transform .8s;}
+  .card:hover .cover img{transform:scale(1.08);}
+  .card .cover .veil{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.05) 40%, rgba(0,0,0,.55));}
+  .card .cover .flag{position:absolute; left:16px; top:16px; background:rgba(0,0,0,.55); color:#f3e6c2;
+                     border:1px solid rgba(243,230,194,.4); border-radius:999px; padding:3px 14px; font-size:16.5px;}
+  .card .body{ padding:20px 24px 18px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .card .body h2{font-size:27px; color:var(--green); letter-spacing:1px;}
+  .card .body h2 small{display:block; font-size:16.5px; color:#8a938c; font-weight:400; margin-top:4px; letter-spacing:3px;}
+  .card .meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px;}
+  .pill{background:#f3e6c2; color:#6d5300; border-radius:999px; padding:2px 12px; font-size:16.5px;}
+  .pill.b{background:#e3eef5; color:#2f6f8f;}
+  .card p.desc{font-size:17.5px; color:#5b655e; line-height:1.65; margin-top:2px;}
+  .card .go{margin-top:auto; align-self:flex-start; color:#8a6d00; font-size:19px; font-weight:600; letter-spacing:1px;}
+  .card .go::after{content:" →"; transition:margin .2s;}
+  .card:hover .go::after{margin-left:6px;}
 
-  /* ---------- 导航 ---------- */
-  nav.toc{position:sticky; top:0; z-index:900; background:rgba(246,244,236,.96); backdrop-filter:blur(6px);
-          border-bottom:1px solid var(--line);}
-  nav.toc .in{max-width:1180px; margin:0 auto; padding:12px 22px; display:flex; gap:8px; flex-wrap:wrap;}
-  nav.toc a{text-decoration:none; color:var(--green); font-size:20px; padding:6px 16px; border-radius:10px;
-            transition:.15s;}
-  nav.toc a:hover{background:var(--gold-l);}
+  /* 立体位置：中 / 左 / 右 */
+  .card.pos-0{ transform:translateX(0) translateZ(70px) rotateY(0) scale(1); z-index:5; opacity:1; filter:brightness(1);}
+  .card.pos-1{ transform:translateX(-72%) translateZ(-160px) rotateY(38deg) scale(.82); z-index:2; opacity:.85; filter:brightness(.6);}
+  .card.pos-2{ transform:translateX(72%) translateZ(-160px) rotateY(-38deg) scale(.82); z-index:2; opacity:.85; filter:brightness(.6);}
+  .card.off{ opacity:0; pointer-events:none;}
 
-  /* ---------- 章节通用 ---------- */
-  section{margin-top:72px;}
-  h2.sec{font-size:39px; color:var(--green); display:flex; align-items:center; gap:16px; margin-bottom:10px;}
-  h2.sec::before{content:""; width:21px; height:39px; background:linear-gradient(var(--gold),var(--green));
-                 border-radius:6px; flex:none;}
-  .sec-sub{color:var(--muted); font-size:21px; margin-bottom:24px; padding-left:37px;}
-  h3{color:var(--green); font-size:28.5px; margin:28px 0 14px;}
-  h4{color:var(--green-l); font-size:24px; margin:18px 0 10px;}
+  .nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:9;
+    width:66px; height:88px; border:none; border-radius:14px; cursor:pointer;
+    background:rgba(240,237,228,.1); color:#f0ede4; font-size:46px; line-height:1;
+    transition:background .2s;
+  }
+  .nav-btn:hover{background:rgba(240,237,228,.24);}
+  .nav-prev{left:max(16px, calc(50% - 560px));}
+  .nav-next{right:max(16px, calc(50% - 560px));}
 
-  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px 26px;
-        box-shadow:0 2px 10px rgba(27,77,62,.05); margin-bottom:20px;}
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
-  @media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .dots{display:flex; gap:12px; justify-content:center; margin-top:6px; position:relative; z-index:6;}
+  .dots i{width:14px; height:14px; border-radius:50%; background:rgba(240,237,228,.25); cursor:pointer; transition:.25s;}
+  .dots i.on{background:var(--gold); transform:scale(1.25);}
 
-  table{width:100%; border-collapse:collapse; font-size:22px; background:#fff;}
-  th{background:var(--green); color:#fff; padding:12px 16px; text-align:left; font-weight:600; white-space:nowrap;}
-  td{border-bottom:1px solid var(--line); padding:12px 16px; vertical-align:top;}
-  tr:nth-child(even) td{background:#faf9f3;}
-  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:12px;}
-
-  .src{font-size:18.8px; color:var(--muted);}
-  .src a{color:var(--blue); text-decoration:none;}
-  .ref{display:inline-block; background:var(--gold-l); color:#7a5d00; border-radius:8px;
-       font-size:17.3px; padding:0 8px; margin-left:5px; vertical-align:2px; white-space:nowrap;}
-
-  /* ---------- 交通 SVG ---------- */
-  .route-svg{width:100%; height:auto; display:block;}
-  .flight-box{background:linear-gradient(135deg,#fbf8ef,#f6efdd); border:1px dashed var(--gold);
-              border-radius:12px; padding:16px 20px; font-size:21px;}
-
-  /* ---------- 地图 ---------- */
-  #map{height:600px; border-radius:14px; border:1px solid var(--line); z-index:1;}
-  .legend{background:#fff; padding:12px 16px; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,.18);
-          font-size:19.5px; line-height:2;}
-  .legend i{display:inline-block; width:14px; height:14px; border-radius:50%; margin-right:8px; vertical-align:-1px;}
-  .map-note{font-size:19.5px; color:var(--muted); margin-top:12px;}
-
-  /* ---------- 逐日行程 ---------- */
-  .day{background:var(--card); border:1px solid var(--line); border-radius:16px; margin-bottom:28px;
-       overflow:hidden; box-shadow:0 2px 10px rgba(27,77,62,.05);}
-  .day-head{background:linear-gradient(90deg,var(--green),var(--green-l)); color:#fff; padding:16px 26px;
-            display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;}
-  .day-head .dno{font-size:33px; font-weight:700; color:var(--gold-l);}
-  .day-head .dt{font-size:19.5px; opacity:.9;}
-  .day-head .dtitle{font-size:25.5px; font-weight:600;}
-  .day-body{padding:20px 26px 22px;}
-  .halves{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
-  @media (max-width:860px){.halves{grid-template-columns:1fr;}}
-  .half{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:#fcfbf7;}
-  .half h5{font-size:21px; color:var(--green); display:flex; align-items:center; gap:10px; margin-bottom:10px;}
-  .half h5 .ico{flex:none; width:34px; height:34px; border-radius:50%; background:var(--gold-l);
-                display:inline-flex; align-items:center; justify-content:center; font-size:19.5px;}
-  .half ul{list-style:none;}
-  .half li{padding:4px 0 4px 16px; position:relative; font-size:21px;}
-  .half li::before{content:"•"; position:absolute; left:2px; color:var(--gold);}
-  .day-route{margin:16px 0 6px; background:#f4f7f2; border:1px dashed #cfd8cc; border-radius:10px;
-             padding:12px 16px; font-size:20.3px; color:#3c4a42; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
-  .day-route b{color:var(--green);}
-  .day-tip{margin-top:14px; background:#fdf6e3; border-left:5px solid var(--gold); border-radius:0 8px 8px 0;
-           padding:11px 16px; font-size:20.3px; color:#6b5a1e;}
-  .day-tip b{color:#8a6d00;}
-  .day-tip.alert{background:#fdeeea; border-left-color:var(--red); color:#7a2e1c;}
-  .day-tip.alert b{color:var(--red);}
-  .day.puer{border:1px solid #d8ceb0;}
-  .day.puer .day-head{background:linear-gradient(90deg,#5a4632,#8a6d3b);}
-
-  /* ---------- 景点卡与图片集 ---------- */
-  .spot{display:grid; grid-template-columns:360px 1fr; gap:22px; background:#fff; border:1px solid var(--line);
-        border-radius:14px; overflow:hidden; margin-bottom:22px;}
-  @media (max-width:800px){.spot{grid-template-columns:1fr;}}
-  .spot .info{padding:18px 22px 16px;}
-  .spot .info h3{margin-top:0;}
-  .spot .meta{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px;}
-  .chip{background:var(--gold-l); color:#6d5300; font-size:18px; border-radius:999px; padding:3px 14px;}
-  .chip.g{background:#e2efe7; color:#1f5c46;}
-  .chip.b{background:#e3eef5; color:#2f6f8f;}
-  .spot p{font-size:21px; margin:5px 0;}
-  .warn{background:#fdeeea; border-left:5px solid var(--red); padding:10px 14px; border-radius:0 8px 8px 0;
-        font-size:20.3px; margin-top:12px; color:#7a2e1c;}
-  .warn b{color:var(--red);}
-
-  .gal{display:flex; flex-direction:column;}
-  .gal-main{position:relative; aspect-ratio:4/3; background:#efece1; overflow:hidden; cursor:zoom-in;}
-  .gal-main img{width:100%; height:100%; object-fit:cover; display:block;}
-  .gal-btn{position:absolute; top:50%; transform:translateY(-50%); width:56px; height:72px; border:none;
-           background:rgba(20,35,28,.45); color:#fff; font-size:42px; line-height:1; cursor:pointer;
-           display:flex; align-items:center; justify-content:center; border-radius:10px; padding:0;}
-  .gal-btn:hover{background:rgba(20,35,28,.7);}
-  .gal-prev{left:8px;} .gal-next{right:8px;}
-  .gal-count{position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,.55); color:#fff;
-             border-radius:10px; padding:2px 14px; font-size:18px;}
-  .gal-hint{position:absolute; left:10px; bottom:10px; background:rgba(0,0,0,.45); color:#fff;
-            border-radius:10px; padding:2px 12px; font-size:16.5px;}
-  .gal-thumbs{display:flex; gap:8px; padding:10px; overflow-x:auto; background:#faf9f3;
-              -webkit-overflow-scrolling:touch; scrollbar-width:thin;}
-  .gal-thumbs img{flex:none; width:96px; height:68px; object-fit:cover; border-radius:8px; cursor:pointer;
-                  opacity:.6; border:2px solid transparent; display:block;}
-  .gal-thumbs img.on{opacity:1; border-color:var(--gold);}
-
-  /* ---------- 灯箱 ---------- */
-  .lb{position:fixed; inset:0; background:rgba(8,12,10,.97); z-index:2000; display:none;
-      align-items:center; justify-content:center; flex-direction:column; padding:20px;}
-  .lb.on{display:flex;}
-  .lb img{max-width:96vw; max-height:82vh; object-fit:contain; border-radius:8px;}
-  .lb .lb-cap{color:#eee; font-size:19.5px; margin-top:14px; text-align:center;}
-  .lb .lb-x{position:absolute; top:6px; right:6px; background:none; border:none; color:#fff;
-            font-size:54px; line-height:1; cursor:pointer; padding:10px 18px;}
-  .lb .lb-btn{position:absolute; top:50%; transform:translateY(-50%); width:64px; height:96px; border:none;
-              background:rgba(255,255,255,.14); color:#fff; font-size:52px; cursor:pointer; border-radius:12px;}
-  .lb .lb-btn:hover{background:rgba(255,255,255,.3);}
-  .lb .lb-prev{left:12px;} .lb .lb-next{right:12px;}
-
-  /* ---------- 美食 ---------- */
-  .food-card{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden;}
-  .food-card img{width:100%; height:240px; object-fit:cover; display:block;}
-  .food-card .cap{padding:14px 18px; font-size:21px;}
-  .food-card .cap b{color:var(--green); display:block; margin-bottom:6px;}
-
-  /* ---------- 避坑 ---------- */
-  .avoid-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
-  @media (max-width:860px){.avoid-grid{grid-template-columns:1fr;}}
-  .avoid-item{background:#fff; border:1px solid #f0d9d2; border-radius:12px; padding:18px 20px;}
-  .avoid-item h4{color:var(--red); margin-top:0;}
-  .avoid-item p{font-size:21px;}
-  .ok{color:#1f5c46; font-weight:600;}
-
-  /* ---------- 清单 ---------- */
-  .pack-cols{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-  @media (max-width:860px){.pack-cols{grid-template-columns:1fr;}}
-  .pack ul{list-style:none;}
-  .pack li{padding:9px 2px 9px 40px; position:relative; border-bottom:1px dashed var(--line); font-size:22px;}
-  .pack li::before{content:"✔"; position:absolute; left:10px; color:var(--green-l); font-weight:700;}
-  .pack li b{color:var(--green);}
-  .pack li .why{display:block; font-size:18.8px; color:var(--muted);}
-
-  footer{margin-top:80px; padding-top:26px; border-top:1px solid var(--line); font-size:19.5px; color:var(--muted);}
+  footer{ text-align:center; padding:56px 16px 44px; color:#7d8a81; font-size:17.5px; line-height:2;}
 
   /* ---------- 手机适配 ---------- */
-  @media (max-width:640px){
-    body{font-size:23px;}
-    .wrap{padding:0 12px 60px;}
-    header.hero{padding:44px 12px 40px;}
-    .hero .pills{gap:8px;}
-    nav.toc .in{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
-                padding:10px 12px; gap:6px;}
-    nav.toc .in::-webkit-scrollbar{display:none;}
-    nav.toc a{white-space:nowrap; flex:none; font-size:19.5px; padding:6px 12px;}
-    section{margin-top:52px;}
-    h2.sec{font-size:31px;}
-    h2.sec::before{width:16px; height:31px;}
-    .sec-sub{padding-left:24px; font-size:20.3px;}
-    h3{font-size:25.5px;} h4{font-size:22.5px;}
-    .card{padding:16px 16px; border-radius:12px;}
-    .day-head{padding:12px 16px;}
-    .day-body{padding:14px 16px 16px;}
-    .spot .info{padding:14px 14px 12px;}
-    .gal-main{aspect-ratio:4/3;}
-    .gal-btn{width:46px; height:60px; font-size:36px;}
-    .gal-thumbs img{width:82px; height:58px;}
-    .food-card img{height:200px;}
-    #map{height:440px;}
-    .legend{font-size:16.5px; line-height:1.8;}
-    .hero h1{letter-spacing:1px;}
+  @media (max-width:760px){
+    body{font-size:21px;}
+    header.top{padding:44px 12px 4px;}
+    .stage{height:560px;}
+    .card{width:82vw; max-width:430px; height:520px; margin:-260px 0 0 calc(-41vw);}
+    .card.pos-1{transform:translateX(-56%) translateZ(-140px) rotateY(42deg) scale(.78);}
+    .card.pos-2{transform:translateX(56%) translateZ(-140px) rotateY(-42deg) scale(.78);}
+    .nav-btn{width:52px; height:72px; font-size:36px;}
+    .nav-prev{left:8px;} .nav-next{right:8px;}
+    .card .body h2{font-size:24px;}
+    .card p.desc{font-size:16.5px;}
+    .card .body{padding:16px 18px 14px; gap:6px;}
   }
-
-  @media print{
-    nav.toc{display:none;} #map{height:420px;}
-    .day,.card,.spot{box-shadow:none; break-inside:avoid;}
-    body{background:#fff;}
+  @media (prefers-reduced-motion:reduce){
+    .track,.card,.card .cover img{transition:none;}
   }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="tag">休 闲 深 度 · 普 洱 ＋ 版 纳</div>
-  <h1>西安 → 西双版纳 · 十日之旅
-    <small>小熊猫与咖啡 · 雨林 · 佛寺 · 夜市 · 傣味 —— 不赶路的行程</small>
-  </h1>
-  <div class="pills">
-    <div class="pill">📅 <b>2026.10.20 – 10.29</b>（10天9晚）</div>
-    <div class="pill">✈️ 西安直飞约 <b>3.5 小时</b></div>
-    <div class="pill">🏨 普洱 2 晚 ＋ 告庄<b>连住 7 晚</b></div>
-    <div class="pill">🐢 上午＋下午各 1 活动 · <b>午休 2 小时</b></div>
-  </div>
+<header class="top">
+  <div class="tag">T R A V E L · S H E L F</div>
+  <h1>旅行计划书架</h1>
+  <p class="sub">两份慢慢做的行程攻略，点开即走</p>
+  <p class="hint">← 左右切换卡片，点击正面卡片打开攻略 →</p>
 </header>
 
-<nav class="toc"><div class="in">
-  <a href="#overview">总览</a><a href="#traffic">大交通</a><a href="#map">路线地图</a>
-  <a href="#days">逐日行程</a><a href="#spots">景点详单</a><a href="#food">美食</a>
-  <a href="#avoid">避坑指南</a><a href="#tips">游玩建议</a><a href="#packing">行前物品</a>
-  <a href="#budget">预算</a><a href="#sources">资料来源</a>
-</div></nav>
+<div class="stage" id="stage">
+  <div class="track" id="track">
 
-<div class="wrap">
+    <a class="card" href="banna/" data-i="0">
+      <div class="cover">
+        <img src="banna/assets/img/gold-pagoda-night.jpg" alt="告庄大金塔夜景">
+        <div class="veil"></div>
+        <span class="flag">已上线</span>
+      </div>
+      <div class="body">
+        <h2>西安 → 西双版纳<small>雨林 · 佛寺 · 夜市 · 傣味 · 普洱</small></h2>
+        <div class="meta">
+          <span class="pill">10 天 9 晚</span><span class="pill">2026.10.20–10.29</span><span class="pill b">普洱前置</span>
+        </div>
+        <p class="desc">告庄连住 7 晚＋普洱 2 晚：太阳河小熊猫、那柯里古道、曼听佛寺、野象谷、植物园与和暖的星光夜市——不赶路的单城慢游。</p>
+        <span class="go">打开攻略</span>
+      </div>
+    </a>
 
-<!-- ================= 总览 ================= -->
-<section id="overview">
-  <h2 class="sec">行程总览</h2>
-  <p class="sec-sub">以「休闲慢游」为原则：行程<b>先走普洱 2 晚</b>（落地当天动车 1 小时无缝转场），<b>D3 晚起回告庄连住 7 晚、之后零搬行李</b>；每天上午、下午各安排一个活动，中午午休约 2 小时；最后一天上午留足从容返程。全程仅有的两段紧凑接驳已在当日贴士中特别注明。</p>
+    <a class="card" href="dianxi/" data-i="1">
+      <div class="cover">
+        <img src="dianxi/assets/img/yinxing-1.jpg" alt="腾冲银杏村金黄古村">
+        <div class="veil"></div>
+        <span class="flag">已上线</span>
+      </div>
+      <div class="body">
+        <h2>西安 → 芒市 · 瑞丽 · 腾冲<small>金塔银塔 · 一寨两国 · 火山热海 · 和顺</small></h2>
+        <div class="meta">
+          <span class="pill">9 天 8 晚</span><span class="pill">芒市进 · 腾冲出</span><span class="pill b">银杏季可平移</span>
+        </div>
+        <p class="desc">东航直飞新航线进滇西：芒市双塔与孔雀、瑞丽国门边城、腾冲大滚锅温泉、热气球与和顺古镇的清晨——边境线上的慢行程。</p>
+        <span class="go">打开攻略</span>
+      </div>
+    </a>
 
-  <div class="card">
-    <svg class="route-svg" viewBox="0 0 1470 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="西安到西双版纳交通示意">
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#c9a227"/>
-        </marker>
-      </defs>
-      <line x1="225" y1="112.5" x2="1245" y2="112.5" stroke="#c9a227" stroke-width="4.5" stroke-dasharray="15 12" marker-end="url(#arr)"/>
-      <text x="735" y="82.5" text-anchor="middle" font-size="25.5" fill="#1b4d3e" font-weight="bold">✈ 直飞约 3.5 小时 · 航程约 1600 公里</text>
-      <text x="735" y="147" text-anchor="middle" font-size="18.8" fill="#6b7770">东航 / 祥鹏等执飞，班次随航季调整，建议出发前 2–3 周锁定上午航班</text>
-      <g>
-        <circle cx="180" cy="112.5" r="51" fill="#1b4d3e"/>
-        <text x="180" y="105" text-anchor="middle" font-size="21" fill="#fff">西安</text>
-        <text x="180" y="132" text-anchor="middle" font-size="16.5" fill="#f3e6c2">咸阳机场</text>
-      </g>
-      <g>
-        <circle cx="1290" cy="112.5" r="51" fill="#c9a227"/>
-        <text x="1290" y="105" text-anchor="middle" font-size="19.5" fill="#fff">西双版纳</text>
-        <text x="1290" y="130.5" text-anchor="middle" font-size="16.5" fill="#fff">嘎洒机场</text>
-      </g>
-      <text x="1290" y="198" text-anchor="middle" font-size="18" fill="#6b7770">↓ 机场距市区仅约 7 公里，打车约 17 分钟</text>
-    </svg>
+    <div class="card" data-i="2" style="cursor:default;">
+      <div class="cover">
+        <img src="dianxi/assets/img/rehai-2.jpg" alt="热海大滚锅蒸汽">
+        <div class="veil"></div>
+        <span class="flag">下一站 · 敬请期待</span>
+      </div>
+      <div class="body">
+        <h2>更多目的地<small>书架还留了一格</small></h2>
+        <div class="meta"><span class="pill b">规划中</span></div>
+        <p class="desc">书架上永远为下一个目的地留一格——想好了就去，慢慢做攻略。</p>
+      </div>
+    </div>
+
   </div>
+  <button class="nav-btn nav-prev" id="prev" aria-label="上一张">‹</button>
+  <button class="nav-btn nav-next" id="next" aria-label="下一张">›</button>
+</div>
 
-  <div class="tbl-wrap"><table>
-    <tr><th>日</th><th>日期</th><th>主题</th><th>上午</th><th>下午</th><th>晚上</th></tr>
-    <tr><td><b>D1</b></td><td>10.20 周二</td><td>抵达·转场普洱</td><td>✈ 西安直飞版纳</td><td>落地 → 动车赴普洱</td><td>普洱市区安顿</td></tr>
-    <tr><td><b>D2</b></td><td>10.21 周三</td><td>普洱·太阳河</td><td>太阳河森林公园</td><td>园内继续 → 市区休整</td><td>茶马古城夜景</td></tr>
-    <tr><td><b>D3</b></td><td>10.22 周四</td><td>普洱→告庄</td><td>那柯里茶马驿站</td><td>小凹子咖啡庄园 → 动车返</td><td>告庄入住·夜市初逛</td></tr>
-    <tr><td><b>D4</b></td><td>10.23 周五</td><td>傣王御花园·礼佛</td><td>曼听公园＋总佛寺</td><td>勐泐大佛寺（山顶俯瞰）</td><td>《澜沧江·湄公河之夜》晚会</td></tr>
-    <tr><td><b>D5</b></td><td>10.24 周六</td><td>雨林＋写真</td><td>原始森林公园（孔雀放飞）</td><td>傣装写真（告庄/曼听取景）</td><td>星光夜市深度游</td></tr>
-    <tr><td><b>D6</b></td><td>10.25 周日</td><td>寻象＋傣寨</td><td>野象谷</td><td>曼掌村非遗体验（同勐养线）</td><td>曼听小寨傣味烧烤</td></tr>
-    <tr><td><b>D7</b></td><td>10.26 周一</td><td>傣族园·游江</td><td>傣族园（橄榄坝）寨子佛寺</td><td>园内泼水 → 回酒店冲澡</td><td>澜沧江夜游 → 江边夜市</td></tr>
-    <tr><td><b>D8</b></td><td>10.27 周二</td><td>植物王国</td><td>中科院热带植物园（西区）</td><td>植物园（继续西区）</td><td>返告庄休整</td></tr>
-    <tr><td><b>D9</b></td><td>10.28 周三</td><td>轻量收尾</td><td>热带花卉园＋水果</td><td>六国水上市场·按摩·手信</td><td>告别晚宴·（可选）傣秀</td></tr>
-    <tr><td><b>D10</b></td><td>10.29 周四</td><td>返程</td><td>自然醒·手信查漏·退房</td><td>✈ 版纳直飞西安</td><td>— 抵家 —</td></tr>
-  </table></div>
-  <p class="src" style="margin-top:10px;">注：参考攻略口径，当地最佳旅游时段为 11 月至次年 4 月，10 月下旬已临近该窗口<span class="ref">[1]</span>；天气临近出发再确认即可。普洱段（D1–D3）为周边城市扩展：动车约 1 小时直达，且放在开头，版纳主段一气呵成。</p>
-</section>
-
-<!-- ================= 大交通 ================= -->
-<section id="traffic">
-  <h2 class="sec">大交通方案</h2>
-  <p class="sec-sub">推荐「直飞往返＋中老铁路动车」。西双版纳嘎洒机场是全国 11 个与西安通直飞的城市机场之一<span class="ref">[1]</span>，且机场离市区非常近；普洱段走动车，落地当天无缝转场<span class="ref">[21]</span>。</p>
-
-  <div class="grid2">
-    <div class="card">
-      <h4>✈ 去程 · 10.20（周二）</h4>
-      <p style="font-size:22px;">西安咸阳国际机场 → 西双版纳嘎洒机场<br>
-      直飞约 <b>3 小时 15 分 – 3 小时 40 分</b>，东航、祥鹏等执飞<span class="ref">[1][19]</span>。选<b>上午起飞</b>班次，午后落地。</p>
-      <p class="src">落地后不出机场区：直接打车去<b>版纳站</b>，转晚班动车赴普洱（见下方普洱段说明）——D1 当天即完成"飞行＋转场"，之后再无长途移动。</p>
-    </div>
-    <div class="card">
-      <h4>✈ 返程 · 10.29（周四）</h4>
-      <p style="font-size:22px;">西双版纳嘎洒机场 → 西安咸阳国际机场<br>
-      选 <b>下午起飞</b> 班次：上午从容退房、买手信，午饭后出发去机场。</p>
-      <p class="src">单程票价以购票平台实时为准；若直飞班次不理想，可看「空铁联运」方案（西安飞昆明＋昆明动车进版纳，单程约 300–500 元起）<span class="ref">[19]</span>。普洱思茅机场无西安直飞，故普洱段安排为动车往返、返程仍从版纳起飞。</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4>🚄 普洱段 · 中老铁路动车（D1 下午去 / D3 傍晚返）</h4>
-    <p style="font-size:22px;">版纳站（距嘎洒机场约 10 公里、车程 25 分钟）⇌ 普洱站，动车约 <b>40 分钟–1 小时</b>，班次以 12306 实时查询为准<span class="ref">[21]</span>；票价数十元量级。</p>
-    <p class="warn" style="margin-top:12px;"><b>⚠ 去程（D1）是全程唯一紧凑接驳：</b>买<b>可改签</b>的晚班动车（落地距发车预留 3 小时以上）；航班若延误，12306 就近改签下一班。极端情况（当日动车全部停运）就当晚宿景洪一晚、次日早班补上，D2 太阳河压缩为半天精华，后续行程不动。<b>返程（D3）选傍晚班次</b>，咖啡庄园在郊外、提前平台叫车，到站留足缓冲。</p>
-    <p class="src" style="margin-top:10px;">大件行李随行动车即可（车厢行李架充足），不必先绕告庄寄存；普洱站距市区酒店约 10 分钟车程。</p>
-  </div>
-
-  <div class="card">
-    <h4>🚕 机场 ⇄ 告庄西双景（住宿地）</h4>
-    <p style="font-size:22px;">嘎洒机场距景洪市区仅约 <b>7.3 公里，车程约 17 分钟</b><span class="ref">[1]</span>；到告庄约 8–9 公里、20 分钟上下<span class="ref">[6]</span>。
-    出租车/网约车 <b>20–40 元</b>（景洪出租起步价 8 元 / 2 公里）<span class="ref">[6]</span>；也有机场专线巴士直达告庄和市中心，约 30 分钟<span class="ref">[6]</span>。</p>
-    <p class="warn" style="margin-top:12px;"><b>要点：</b>落地后在网约车平台叫车或走出租车站排队，<b>不要理会出站口主动搭讪拉客的"低价接送"</b><span class="ref">[2][3]</span>。</p>
-  </div>
-
-  <div class="card">
-    <h4>🚄 没抢到直飞怎么办（备选）</h4>
-    <p style="font-size:22px;">西安—版纳无直达火车：高铁需西安→昆明南（约 10–12 小时）再转中老铁路动车（约 3.5 小时），全程 14 小时以上，不适合本次行程<span class="ref">[19]</span>。
-    更实用的替代是「空铁联运」：飞昆明 + 动车进版纳（版纳站距市区约 5 公里）<span class="ref">[1][19]</span>。</p>
-  </div>
-</section>
-
-<!-- ================= 地图 ================= -->
-<section id="map">
-  <h2 class="sec">路线地图</h2>
-  <p class="sec-sub">行程先北后南：D1–D3 普洱片区（动车往返），D3 晚起驻景洪告庄大本营。下图标注了全部点位与备选景点（含玉溪·抚仙湖备选），点按标记可查看名称与安排日；虚线为当日往返车程/动车示意。</p>
-  <div id="map"></div>
-  <p class="map-note">🗺 本地图底图默认使用高德瓦片（国内访问快，需联网加载）；右上角可切换 OSM 底图。若离线打开，地图区仅显示标注点与连线。距离/车程以公路实际里程为准，为约数。</p>
-</section>
-
-<!-- ================= 逐日行程 ================= -->
-<section id="days">
-  <h2 class="sec">逐日行程（以半天为单位）</h2>
-  <p class="sec-sub">节奏：上午一个主活动 → 午餐＋午休约 2 小时 → 下午一个活动 → 晚上轻量安排；<b>不按具体钟点执行，随体感微调</b>。市区日回酒店午睡；远郊同线日以午餐＋就地歇脚替代。凡涉及紧凑接驳的转场/返程，已在当日贴士中以 <b>⚠ 红字</b>特别注明。门票提前 1 天线上购买（多数景区实名制）<span class="ref">[4][16]</span>。</p>
-
-  <!-- D1 -->
-  <div class="day puer">
-    <div class="day-head"><span class="dno">D1</span><span class="dt">10.20 周二</span><span class="dtitle">飞行 · 转场普洱 · 安顿</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜飞行</h5><ul>
-          <li>上午航班直飞西双版纳，机上约 3.5 小时</li>
-          <li>机上预下载好离线地图与影视</li>
-          <li>落地前确认动车票与酒店信息</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🚄</span>下午｜动车转场</h5><ul>
-          <li>午后落地嘎洒机场，平台叫车赴<b>版纳站</b>（约 25 分钟）</li>
-          <li>乘晚班动车约 1 小时抵<b>普洱站</b><span class="ref">[21]</span></li>
-          <li>打车入住市区酒店（约 10 分钟），大件行李随车即可</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜安顿</h5><ul>
-          <li>酒店周边简餐：普洱米干、豆汤米线</li>
-          <li>早点休息，明天进森林公园</li>
-        </ul></div>
-      </div>
-      <div class="day-route">✈ 咸阳机场 → 嘎洒机场 →（车约25分）→ 版纳站 ⟶动车约1小时[21]⟶ 普洱站 →（车约10分）→ 普洱市区酒店</div>
-      <div class="day-tip alert"><b>⚠ 紧凑接驳提示（全程仅此一处）：</b>航班→动车当天衔接。动车票务必买<b>可改签的晚班</b>、落地距发车留 3 小时以上；航班延误就 12306 改签下一班；极端情况当晚宿景洪、次日早班补上（D2 太阳河压缩为半天精华，后续不动）。身份证随身：边境管理区查验＋动车刷证<span class="ref">[12]</span>。</div>
-    </div>
-  </div>
-
-  <!-- D2 -->
-  <div class="day puer">
-    <div class="day-head"><span class="dno">D2</span><span class="dt">10.21 周三</span><span class="dtitle">太阳河森林公园 · 茶马古城</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜进园</h5><ul>
-          <li>早餐后出发，打车约 40 分钟进<b>太阳河森林公园</b>，开园即入避人流</li>
-          <li><b>门票＋接驳车约 100 元</b><span class="ref">[22]</span>：<b>小熊猫近距离互动</b>是招牌</li>
-          <li>沿单向游览线走：白犀牛、长臂猿、猕猴区</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜园内继续</h5><ul>
-          <li>园内简餐或自带干粮，午后荫凉处歇脚（当日午休以园内慢歇替代）</li>
-          <li>雨林栈道段慢慢走，拍照给足时间</li>
-          <li>出园返市区，回酒店休整</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜茶马古城</h5><ul>
-          <li><b>茶马古城</b>夜市：烤豆腐、民族小吃晚餐，夜景灯光出片<span class="ref">[23]</span></li>
-          <li>打车往返约 15 分钟，逛尽兴就撤、早点回酒店休息</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 普洱酒店 →（车约40分）→ 太阳河森林公园 → 返回市区 → 茶马古城夜景</div>
-      <div class="day-tip"><b>当日贴士：</b>互动投喂项目按需另收费，先问价再参与<span class="ref">[22]</span>；雨林路段湿滑，穿防滑鞋、善用接驳车省体力。本日与 D8 植物园并列全程步数最多，量力而行。</div>
-    </div>
-  </div>
-
-  <!-- D3 -->
-  <div class="day puer">
-    <div class="day-head"><span class="dno">D3</span><span class="dt">10.22 周四</span><span class="dtitle">那柯里 · 咖啡庄园 · 回告庄</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜那柯里驿站</h5><ul>
-          <li>睡到自然醒，早餐后出发（车约 30 分钟）到<b>那柯里茶马古道驿站</b>（免费）<span class="ref">[23][24]</span></li>
-          <li>百年马店老宅、马蹄印石板路、风雨桥；驿站咖啡馆"围炉煮茶"</li>
-          <li>那柯里农家乐午餐（马帮菜）</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜咖啡庄园→返程</h5><ul>
-          <li>车约 30 分钟到<b>小凹子咖啡庄园</b>：庄园漫步＋手冲品鉴（咖啡消费自理）<span class="ref">[22][23]</span></li>
-          <li>品鉴结束后返回普洱站（车约 20 分钟）</li>
-          <li>乘<b>傍晚班次</b>动车返景洪，抵告庄办理<b>连住 7 晚</b>入住<span class="ref">[21]</span></li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜夜市初见</h5><ul>
-          <li>行李入库，步行<b>大金塔</b>（外观免费）→ <b>星光夜市</b>初逛<span class="ref">[1]</span></li>
-          <li>夜市简餐，熟悉告庄环境（超市、药店、直通车售票点）</li>
-          <li>早点休息</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 普洱酒店 →（车30分）→ 那柯里驿站 →（车30分）→ 小凹子咖啡庄园 → 普洱站 ⟶动车约1小时⟶ 版纳站 → 告庄（连住9晚）</div>
-      <div class="day-tip alert"><b>⚠ 返程接驳提示：</b>咖啡庄园在郊外，<b>提前平台叫车</b>、留足到站缓冲；动车选<b>傍晚班次</b>而非末班，晚点也有后手。若想更松，可舍那柯里、只去咖啡庄园。<b>从今晚起再无长途移动。</b></div>
-    </div>
-  </div>
-
-  <!-- D4 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D4</span><span class="dt">10.23 周五</span><span class="dtitle">曼听公园 · 总佛寺 · 大佛寺 · 篝火晚会</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜傣王御花园</h5><ul>
-          <li>打车约 10 分钟到<b>曼听公园</b>（门票约 40 元）<span class="ref">[4]</span></li>
-          <li>御花园、白象雕塑、放生亭、八角亭慢慢逛（约 2.5 小时）</li>
-          <li>公园后门直通<b>总佛寺</b>（免费）<span class="ref">[1]</span>，南传佛教圣地</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜礼佛俯瞰</h5><ul>
-          <li>回告庄午餐、午休</li>
-          <li>打车约 15 分钟到<b>勐泐大佛寺</b>（门票约 100–120 元，电瓶车另收 40–60 元）<span class="ref">[4][9]</span></li>
-          <li>山顶大佛处<b>俯瞰景洪市区</b>，傍晚前返程</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜湄公河之夜晚会</h5><ul>
-          <li><b>《澜沧江·湄公河之夜》歌舞篝火晚会</b>：含自助晚餐＋歌舞＋篝火狂欢，甲票约 137 元起<span class="ref">[13]</span></li>
-          <li>就在曼听公园内，白天踩过点，晚上轻车熟路</li>
-          <li>散场打车回告庄（约 10 分钟）</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车10分）→ 曼听 ↔ 总佛寺 → 午休 →（车15分）→ 勐泐大佛寺 → 晚会（曼听园内）</div>
-      <div class="day-tip"><b>当日贴士：</b>进佛寺不穿吊带、短裤、拖鞋，可自备披肩或租借筒裙<span class="ref">[3]</span>。大佛寺商业化差评较多<span class="ref">[9]</span>，不感兴趣可改市区热带花卉园或回告庄休整（弹性）。</div>
-    </div>
-  </div>
-
-  <!-- D5 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D5</span><span class="dt">10.24 周六</span><span class="dtitle">原始森林公园 · 傣装写真 · 星光夜市</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜沟谷雨林</h5><ul>
-          <li>打车约 20 分钟到<b>原始森林公园</b>（门票约 65 元）<span class="ref">[4]</span></li>
-          <li>看<b>孔雀放飞</b>（场次以景区当日公告为准）＋ 沟谷雨林栈道</li>
-          <li>园内有电瓶车，可省体力；午后返回告庄</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜傣装写真</h5><ul>
-          <li>午餐＋午休</li>
-          <li><b>租傣装＋妆造</b>约 80–120 元 / 4 小时<span class="ref">[7]</span>，告庄门店或上门妆造</li>
-          <li>取景：告庄大金塔街景、江边、曼听公园外围，傍晚光线最好</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜星光夜市</h5><ul>
-          <li>夜市入夜后最热闹：小吃、水果、手作、江景一体<span class="ref">[1]</span></li>
-          <li>夜市晚餐：烤串＋菠萝饭＋鲜榨果汁（避坑见避坑章）</li>
-          <li>收摊前撤退即可</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车20分）→ 原始森林公园 → 回告庄午休 → 告庄/江边写真 → 步行夜市</div>
-      <div class="day-tip"><b>当日贴士：</b>19.9/99 元"低价旅拍"是引流套路，勿当场交钱；选店先白纸黑字确认底片、精修张数与加片单价<span class="ref">[7][8]</span>。夜市"鲜榨果汁掺水"被多次点名，更稳妥去江边夜市买<span class="ref">[11]</span>。</div>
-    </div>
-  </div>
-
-  <!-- D6 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D6</span><span class="dt">10.25 周日</span><span class="dtitle">野象谷 · 曼掌村非遗 · 曼听小寨烧烤</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜亚洲象栖息地</h5><ul>
-          <li>早出发（直通车/包车，车程约 1 小时）到<b>野象谷</b>（门票约 75 元，电瓶车约 50 元）<span class="ref">[16]</span></li>
-          <li>走<b>高空观象栈道</b>＋蝴蝶园、蜥蜴园，上午象群活动概率更高</li>
-          <li>出园后车约 20 分钟去曼掌村（同勐养方向，不走回头路）</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜傣寨非遗手作</h5><ul>
-          <li><b>曼掌村</b>傣家乐午餐，饭后竹楼下歇脚</li>
-          <li>体验<b>慢轮制陶、古法造纸、织锦</b>（单项约 80–150 元）<span class="ref">[10][13]</span>——坐着做的慢活动，本身就是休整</li>
-          <li>傍晚返程回告庄</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜曼听小寨</h5><ul>
-          <li>打车到<b>曼听小寨</b> 烧烤大排档聚集区</li>
-          <li>推荐<b>玉丙黎明傣家烧烤</b>：香茅草烤鱼、烤五花肉是招牌<span class="ref">[9]</span></li>
-          <li>人均 60 元上下，烟火气十足</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车约50分）→ 野象谷 →（车20分）→ 曼掌村（午餐·非遗） →（车40分）→ 回告庄 → 晚上曼听小寨</div>
-      <div class="day-tip"><b>当日贴士：</b>同线配对一天玩两站，酒店午休以"村寨慢午餐＋坐着做手工"替代。野象偶遇看运气，心态放平<span class="ref">[16]</span>；村寨体验先问价再动手<span class="ref">[10]</span>。</div>
-    </div>
-  </div>
-
-  <!-- D7 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D7</span><span class="dt">10.26 周一</span><span class="dtitle">傣族园泼水 · 澜沧江夜游</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜橄榄坝五寨</h5><ul>
-          <li>直通车/包车约 45 分钟到<b>傣族园</b>（勐罕镇·橄榄坝，门票约 45 元）<span class="ref">[4]</span></li>
-          <li>五个傣族村寨连成一片：傣家竹楼、佛寺、菩提树慢慢逛</li>
-          <li>园内/勐罕镇午餐，饭后树荫下歇脚</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜泼水＋返程</h5><ul>
-          <li>参加园内天天有的<b>泼水活动</b>（下午场次以园方当日公告为准，园方提供容器）<span class="ref">[2][9]</span></li>
-          <li>返程回告庄，热水澡冲去湿气、稍事休息</li>
-          <li>晚餐从简，给夜游留肚子</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜夜游澜沧江</h5><ul>
-          <li><b>澜沧江夜游游船</b>：约 166–218 元档位，含演出与水果的航线约 178 元<span class="ref">[14]</span>，提前 1 天平台预订</li>
-          <li>码头就在告庄旁，步行/短驳可达</li>
-          <li>下船顺逛<b>江边夜市</b>（本地人夜市，物价更友好）<span class="ref">[1]</span></li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车约45分）→ 傣族园（寨子→泼水） → 回告庄冲澡 → 码头（告庄旁）夜游 → 江边夜市</div>
-      <div class="day-tip"><b>当日贴士：</b>泼水备一套换洗衣物、结束后别着凉<span class="ref">[9]</span>；傣族园商业化明显，把预期放在"泼水＋竹楼拍照"即可<span class="ref">[9]</span>。游船票档位多（含/不含餐），下单看清套餐<span class="ref">[14]</span>。</div>
-    </div>
-  </div>
-
-  <!-- D8 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D8</span><span class="dt">10.27 周二</span><span class="dtitle">中科院热带植物园（全天主菜）</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜出发·西区</h5><ul>
-          <li>版纳客运站班车（23–30 元，约 1.5 小时，经停西门）或平台直通车<span class="ref">[4]</span></li>
-          <li><b>门票约 80 元</b>（含东西区），<b>强烈建议乘园内电瓶车</b>（约 50 元）——园区极大，步行全程约 5 小时<span class="ref">[4]</span></li>
-          <li>上午逛西区：<b>王莲池、棕榈园、奇花异卉园</b></li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜继续西区</h5><ul>
-          <li>园内简餐或自带干粮，午后荫凉处歇脚</li>
-          <li>荫生植物园（下午光线拍蕨类最好）、榕树园（攻略公认精华）<span class="ref">[4]</span></li>
-          <li>傍晚前返程班车回景洪</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜休整</h5><ul>
-          <li>回告庄好好吃一顿正餐（见美食章）</li>
-          <li>早休息，全天步行量大</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（班车/直通车约1.5小时）→ 勐仑·植物园（西区全天） → 返回告庄</div>
-      <div class="day-tip"><b>当日贴士：</b>讲解服务认准园区官方渠道，勿在门口跟私人"讲解"走<span class="ref">[3]</span>。东区"绿石林"徒步强度大，本次不安排；若意犹未尽也不再二刷，把体力留给最后两天的轻松收尾。</div>
-    </div>
-  </div>
-
-  <!-- D9 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D9</span><span class="dt">10.28 周三</span><span class="dtitle">花卉园 · 水上市场 · 告别晚宴</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜热带花卉园</h5><ul>
-          <li>打车约 10 分钟到<b>热带花卉园</b>（市区内，轻量约 2 小时）<span class="ref">[2]</span></li>
-          <li>棕榈区、鸡蛋花、睡莲，散步式游览</li>
-          <li>回程顺路水果市场买当季水果（小菠萝、芒果）</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜水上市场·按摩</h5><ul>
-          <li>午餐＋午休</li>
-          <li><b>湄公河·六国水上市场</b>（告庄内，免费）闲逛拍照</li>
-          <li>傣式按摩约 1 小时（可选，约 100–150 元），松松脚</li>
-          <li>顺路完成<b>手信采购</b>：超市/正规店买茶叶、果干、咖啡</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜告别晚宴</h5><ul>
-          <li><b>曼飞龙烤鸡（总店）</b>：大众点评景洪烤鸡人气榜前列，人均约 66 元<span class="ref">[15]</span></li>
-          <li>烤鸡＋菠萝饭＋包烧，<b>尽量赶在晚高峰前到店</b>（高峰期曾排队 2 小时）<span class="ref">[20]</span></li>
-          <li>有体力可加一场<b>傣秀</b>（约 220 元起<span class="ref">[14]</span>）；回酒店<b>打包行李</b></li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车10分）→ 热带花卉园 → 回告庄午休 → 步行水上市场 → 晚上曼飞龙总店</div>
-      <div class="day-tip"><b>当日贴士：</b>花卉园体量小、适合轻量收尾；若不感兴趣可改告庄巷子深度逛或补漏。今晚记得打包——明天返程。</div>
-    </div>
-  </div>
-
-  <!-- D10 -->
-  <div class="day">
-    <div class="day-head"><span class="dno">D10</span><span class="dt">10.29 周四</span><span class="dtitle">返程 · 回西安</span></div>
-    <div class="day-body">
-      <div class="halves">
-        <div class="half"><h5><span class="ico">☀</span>上午｜从容收尾</h5><ul>
-          <li>睡到自然醒，酒店早餐</li>
-          <li>手信查漏、检查行李与证件</li>
-          <li>午饭后退房（行李可寄存前台，出发前再取）</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌤</span>下午｜飞行</h5><ul>
-          <li>打车赴嘎洒机场（约 20 分钟）<span class="ref">[1]</span></li>
-          <li>下午直飞航班起飞，约 3.5 小时抵西安</li>
-        </ul></div>
-        <div class="half"><h5><span class="ico">🌙</span>晚上｜到家</h5><ul>
-          <li>咸阳机场落地，轨道/出租回家</li>
-        </ul></div>
-      </div>
-      <div class="day-route">🏨 告庄 →（车约20分钟）→ 嘎洒机场 ✈ 西安咸阳</div>
-      <div class="day-tip"><b>当日贴士：</b>生鲜水果一般可托运（以航司规定为准）；榴莲、椰子等禁止携带，别买。返程选下午班次，全程从容。</div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 景点详单（图片集） ================= -->
-<section id="spots">
-  <h2 class="sec">景点详单（图片集 · 门票 · 交通 · 避雷）</h2>
-  <p class="sec-sub">以下按<b>游玩顺序</b>排列：普洱片区（D1–D3 前置）→ 版纳主段 8 个 → 备选 1 个。每个景点配 5 张以上照片组成图片集（优先选用游客实拍）：点缩略图或左右按钮切换，点大图可放大查看，手机上可左右滑动翻图。</p>
-
-  <h3>🚄 普洱片区（D1–D3 · 行程前置 · 动车 1 小时直达）</h3>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/taiyanghe-1.jpg" alt="太阳河森林公园小熊猫">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/taiyanghe-1.jpg" alt="小熊猫林间行走" class="on">
-        <img src="assets/img/taiyanghe-4.jpg" alt="游客与小熊猫近距离互动">
-        <img src="assets/img/taiyanghe-5.jpg" alt="栈道护栏旁的小熊猫（游客实拍）">
-        <img src="assets/img/taiyanghe-3.jpg" alt="雨林栈道航拍">
-        <img src="assets/img/taiyanghe-2.jpg" alt="公园入口（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>普洱 · 太阳河国家森林公园</h3>
-      <div class="meta"><span class="chip">门票＋接驳车约 100 元</span><span class="chip g">普洱市区东南约30公里</span><span class="chip b">D2 全天</span></div>
-      <p>滇西南人气最高的森林公园之一：<b>小熊猫近距离互动</b>是招牌，园内还有白犀牛、长臂猿、猕猴，雨林生态与版纳各处不重样；单向游览、不走回头路，节奏轻松<span class="ref">[22]</span>。</p>
-      <p>🚄 版纳站动车约 1 小时到普洱<span class="ref">[21]</span>，再打车约 40 分钟进园；建议开园即入，避开人流。</p>
-      <p class="src">图源：知乎专栏、携程、China Daily、宁波旅游网等公开图源与游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>互动投喂项目按需另收费，先问价再参与<span class="ref">[22]</span>；雨林路段湿滑，穿防滑鞋、乘接驳车省体力。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/chadao-1.jpg" alt="那柯里古村">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/chadao-1.jpg" alt="那柯里“我在那柯里等你”木屋" class="on">
-        <img src="assets/img/chadao-2.jpg" alt="驿站雕塑与村中咖啡馆">
-        <img src="assets/img/chadao-3.jpg" alt="马蹄印石板古道">
-        <img src="assets/img/chadao-4.jpg" alt="驿站农家菜">
-        <img src="assets/img/chadao-5.jpg" alt="茶马古道台阶遗迹">
-      </div>
-    </div>
-    <div class="info">
-      <h3>普洱 · 那柯里茶马古道驿站（＋茶马古城夜景）</h3>
-      <div class="meta"><span class="chip">免费（部分体验另收）</span><span class="chip g">普洱市区南约20公里</span><span class="chip b">D2 晚 / D3 上午</span></div>
-      <p>茶马古道上的百年驿站古村：马店老宅、马蹄印石板路、风雨桥保存完好，村中驿站咖啡馆"围炉煮茶"是热门玩法<span class="ref">[23][24]</span>。晚上的<b>茶马古城</b>夜市（市区边缘）是 D2 晚的晚餐据点，烤豆腐是招牌<span class="ref">[23]</span>。</p>
-      <p class="src">图源：Trip.com、文旅头条（侵删）</p>
-      <div class="warn"><b>避雷：</b>村口"小矮马骑乘"等项目先谈好价再上；商业集中在村口，往里走更清净<span class="ref">[23]</span>。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/coffee-1.jpg" alt="小凹子咖啡庄园航拍">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/coffee-1.jpg" alt="庄园与咖啡林航拍" class="on">
-        <img src="assets/img/coffee-2.jpg" alt="露天咖啡座（游客实拍）">
-        <img src="assets/img/coffee-3.jpg" alt="观景台上的游客">
-        <img src="assets/img/coffee-4.jpg" alt="庄园打卡墙">
-        <img src="assets/img/coffee-5.jpg" alt="咖啡果与晾晒加工">
-        <img src="assets/img/coffee-6.jpg" alt="庄园喝咖啡的游客">
-      </div>
-    </div>
-    <div class="info">
-      <h3>普洱 · 小凹子咖啡庄园</h3>
-      <div class="meta"><span class="chip">入园免费·咖啡自费</span><span class="chip g">普洱市区南郊</span><span class="chip b">D3 下午</span></div>
-      <p>云南咖啡的门户庄园，"左手咖啡右手茶"的普洱名片之一：庄园漫步＋手冲品鉴，观景台可俯瞰咖啡林，与那柯里同在城南方向、顺路衔接<span class="ref">[22][23]</span>。品鉴后返程，傍晚动车回景洪<span class="ref">[21]</span>。</p>
-      <p class="src">图源：云南日报、思茅网、腾讯新闻、亿邦动力（侵删）</p>
-      <div class="warn"><b>避雷：</b>品鉴与体验课按项目收费，参加前确认价格；庄园在郊外、打车不便，返程提前叫车<span class="ref">[23]</span>。</div>
-    </div>
-  </div>
-
-  <h3>🌴 西双版纳主段（D3 晚–D9 · 告庄连住 7 晚）</h3>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/gold-pagoda-night.jpg" alt="告庄西双景大金塔夜景">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/gold-pagoda-night.jpg" alt="大金塔夜景" class="on">
-        <img src="assets/img/gaozhuang-2.jpg" alt="告庄西双景街景">
-        <img src="assets/img/gaozhuang-3.jpg" alt="告庄大金塔片区">
-        <img src="assets/img/gaozhuang-4.jpg" alt="告庄游客实拍">
-        <img src="assets/img/gaozhuang-5.jpg" alt="大金塔台阶上俯瞰（游客实拍）">
-        <img src="assets/img/starlight-market.jpg" alt="星光夜市">
-      </div>
-    </div>
-    <div class="info">
-      <h3>告庄西双景 · 大金塔寺 · 星光夜市</h3>
-      <div class="meta"><span class="chip">免费</span><span class="chip g">住在此处</span><span class="chip b">D3/D5/D7 晚</span></div>
-      <p>景洪最热闹的文旅小镇：金塔、湄公河·六国水上市场、号称亚洲规模最大夜市之一的星光夜市<span class="ref">[1]</span>。版纳主段的大本营设在这里，夜市步行可达，是"回家即可逛"的存在。</p>
-      <p>🚕 距机场约 8–9 公里、车程 20 分钟上下<span class="ref">[6]</span>。</p>
-      <p class="src">图源：文旅头条、知乎专栏等公开图源与游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>星光夜市面向游客、物价偏高，买傣装服饰要砍价（同类货江边夜市约 35 元三件套）<span class="ref">[1][2]</span>；果汁掺水问题被多次点名<span class="ref">[11]</span>；19.9 元"低价旅拍"是引流套路，勿当场交钱<span class="ref">[7][8]</span>。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/manting-park.jpg" alt="曼听公园傣式亭阁">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/manting-park.jpg" alt="曼听公园傣式亭阁" class="on">
-        <img src="assets/img/manting-2.jpg" alt="曼听公园园景">
-        <img src="assets/img/manting-3.jpg" alt="曼听公园游客实拍">
-        <img src="assets/img/zong-fosi.jpg" alt="总佛寺金殿">
-        <img src="assets/img/manting-4.jpg" alt="总佛寺白塔（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>曼听公园（傣王御花园）＋ 总佛寺</h3>
-      <div class="meta"><span class="chip">门票约 40 元 / 总佛寺免费</span><span class="chip g">市区 10 分钟</span><span class="chip b">D4 上午</span></div>
-      <p>曾是傣王御花园，园内白象雕塑、放生亭、八角亭皆是出片点；后门连着总佛寺，是南传佛教在西双版纳的中心寺院<span class="ref">[1][2]</span>。公园 08:00–17:00 开放<span class="ref">[13]</span>。</p>
-      <p>🎭 晚上的《澜沧江·湄公河之夜》歌舞篝火晚会就在园内：含自助餐，甲票约 137 元起 / VIP 约 200 元<span class="ref">[13]</span>——白天看园、晚上看演，一站两用。</p>
-      <p class="src">图源：知乎@娟姐（原图带水印，侵删）及游客实拍</p>
-      <div class="warn"><b>避雷：</b>进园和佛寺注意着装（不穿吊带/短裤/拖鞋）<span class="ref">[3]</span>；晚会票在正规平台买，勿买黄牛低价票。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/buddha-temple.jpg" alt="勐泐大佛寺金顶">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/buddha-temple.jpg" alt="大佛寺金顶" class="on">
-        <img src="assets/img/buddha-5.jpg" alt="金色佛塔台阶上的游客（实拍）">
-        <img src="assets/img/buddha-2.jpg" alt="大佛寺建筑（游客实拍）">
-        <img src="assets/img/buddha-3.jpg" alt="大佛寺立佛（游客实拍）">
-        <img src="assets/img/buddha-4.jpg" alt="大佛寺殿宇（游客实拍）">
-        <img src="assets/img/buddha-6.jpg" alt="白象立佛前傣装游客合影">
-      </div>
-    </div>
-    <div class="info">
-      <h3>勐泐大佛寺</h3>
-      <div class="meta"><span class="chip">门票约 100–120 元</span><span class="chip">电瓶车另收</span><span class="chip g">约6公里/15分钟</span><span class="chip b">D4 下午</span></div>
-      <p>在古代傣王皇家寺院原址上重建的南传佛寺，依山而建，山顶可俯瞰景洪，建筑金碧辉煌、东南亚风情浓烈（差评与好评都很集中的一站，见下）。</p>
-      <p class="src">图源：Trip.com、携程及游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>被吐槽最多的是"门票＋电瓶车/扶梯层层收费"的商业化与"新建感"，性价比评价普遍低于免费的曼听/总佛寺一线<span class="ref">[9]</span>——行程将其排在 D4 下午、随时可换：不感兴趣就改热带花卉园或回酒店休整，不影响主线。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/forest-park.jpg" alt="原始森林公园丛林吊桥">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/forest-park.jpg" alt="丛林吊桥" class="on">
-        <img src="assets/img/forest-park-gate.jpg" alt="公园大门">
-        <img src="assets/img/forest-3.jpg" alt="丛林走钢丝表演">
-        <img src="assets/img/forest-4.jpg" alt="沟谷雨林山谷航拍">
-        <img src="assets/img/forest-5.jpg" alt="公园门楼（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>西双版纳原始森林公园</h3>
-      <div class="meta"><span class="chip">门票约 65 元</span><span class="chip g">约10公里/20分钟</span><span class="chip b">D5 上午</span></div>
-      <p>市郊沟谷雨林：孔雀放飞表演是招牌，另有丛林栈道、爱伲山寨互动<span class="ref">[2][4]</span>。半天足够，适合作为"雨林第一课"。</p>
-      <p class="src">图源：文旅头条及公开游记实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>雨林栈道湿滑，穿防滑鞋、走主路；电瓶车票按需购买（门票通常不含）<span class="ref">[16]</span>。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/elephants.jpg" alt="野象谷亚洲象群饮水">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/6</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/elephants.jpg" alt="亚洲象群饮水" class="on">
-        <img src="assets/img/eleph-5.jpg" alt="高空观象栈道穿过树冠（航拍）">
-        <img src="assets/img/eleph-2.jpg" alt="景区入口">
-        <img src="assets/img/eleph-3.jpg" alt="雨林木栈道">
-        <img src="assets/img/eleph-4.jpg" alt="近距离观察大象（游客实拍）">
-        <img src="assets/img/eleph-6.jpg" alt="“野象谷”景观石与大象雕塑（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>野象谷</h3>
-      <div class="meta"><span class="chip">门票约 75 元</span><span class="chip">电瓶车约 50 元</span><span class="chip g">约45公里/50分钟</span><span class="chip b">D6 上午</span></div>
-      <p>亚洲象栖息地：高空观象栈道穿行雨林之上，另有蝴蝶园、蛇蜥园；运气好可偶遇野象群（上午概率更高）<span class="ref">[16]</span>。</p>
-      <p>🐘 官方"雨林牧象"互动需<b>提前 3 天</b>在官方渠道预约<span class="ref">[3][16]</span>。当日与曼掌村同线配对，不走回头路。</p>
-      <p class="src">图源：文旅头条、抖音百科及游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>看到野象是概率事件，别为"看不到野象"失望——差评多源于预期错位<span class="ref">[16]</span>；大象表演有动物福利争议可自行取舍<span class="ref">[16]</span>；跟团多为"首道大门票"，园内二次消费自理<span class="ref">[16]</span>。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/dai-village.jpg" alt="傣族村寨干栏式竹楼">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/dai-village.jpg" alt="干栏式竹楼" class="on">
-        <img src="assets/img/village-2.jpg" alt="曼掌村寨门">
-        <img src="assets/img/village-3.jpg" alt="傣族手鼓体验（游客实拍）">
-        <img src="assets/img/village-4.jpg" alt="古法造纸体验（游客实拍）">
-        <img src="assets/img/village-5.jpg" alt="村巷吊脚楼（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>曼掌村（傣族文化村）</h3>
-      <div class="meta"><span class="chip">村寨免费·体验 80–150 元</span><span class="chip g">与野象谷同线</span><span class="chip b">D6 下午</span></div>
-      <p>勐养镇曼景坎村下属的 500 多年傣族古寨，传统文化保存完整，是安静、低商业化的"活村寨"<span class="ref">[1][10]</span>。可在非遗传习户体验慢轮制陶、古法造纸、织锦、贝叶经<span class="ref">[10][13]</span>。</p>
-      <p>🚌 与野象谷同在勐养方向（两景点车程约 20 分钟），当日同线配对最顺；"版纳好行"直通车需公众号预约<span class="ref">[10]</span>。</p>
-      <p class="src">图源：抖音百科（互动百科）及游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>公共交通不便，勿搭路边无资质车辆<span class="ref">[2][10]</span>；手作体验先问价再动手。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/lancang-night.jpg" alt="澜沧江景洪段夜景">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/lancang-night.jpg" alt="澜沧江夜景" class="on">
-        <img src="assets/img/lancang-2.jpg" alt="夜游多层观光游轮">
-        <img src="assets/img/lancang-3.jpg" alt="“印象澜沧江”游船">
-        <img src="assets/img/lancang-4.jpg" alt="斜拉桥下的游船">
-        <img src="assets/img/lancang-5.jpg" alt="黄昏江畔城市景观">
-      </div>
-    </div>
-    <div class="info">
-      <h3>澜沧江夜游 ＋ 江边夜市</h3>
-      <div class="meta"><span class="chip">游船约166–218元</span><span class="chip g">码头在告庄旁</span><span class="chip b">D7 晚</span></div>
-      <p>"漂浮的傣家宫殿"式游船，3–4 层可观江景、看六国风情歌舞；快艇航线约 178 元（含热带水果）<span class="ref">[14]</span>。下船顺逛江边夜市——本地人常去、物价比星光夜市友好<span class="ref">[1]</span>。</p>
-      <p class="src">图源：易遊網、Trip.com、携程及游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>游船票档位多（含/不含餐、快艇/游轮），下单看清套餐内容；江边夜市同样人多，注意随身财物。</div>
-    </div>
-  </div>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/wanglian.jpg" alt="热带植物园王莲">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/wanglian.jpg" alt="王莲池" class="on">
-        <img src="assets/img/garden-2.jpg" alt="棕榈园（游客实拍）">
-        <img src="assets/img/garden-3.jpg" alt="园区景观（游客实拍）">
-        <img src="assets/img/garden-4.jpg" alt="奇花异卉（游客实拍）">
-        <img src="assets/img/garden-5.jpg" alt="王莲池与棕榈（游客实拍）">
-      </div>
-    </div>
-    <div class="info">
-      <h3>中科院西双版纳热带植物园</h3>
-      <div class="meta"><span class="chip">门票约 80 元</span><span class="chip">电瓶车约 50 元</span><span class="chip g">约70公里/1.5小时</span><span class="chip b">D8 全天</span></div>
-      <p>我国面积最大、物种最丰富的植物园，"活体植物博物馆"<span class="ref">[1][18]</span>。西区为王莲池、棕榈园、奇花异卉园等近百个专类园；榕树园被攻略公认为精华<span class="ref">[4]</span>。</p>
-      <p>🚌 景洪版纳客运站班车 23–30 元约 1.5 小时，经停西门；20 分钟一班、人满即走<span class="ref">[4]</span>。</p>
-      <p class="src">图源：百度百科及游客实拍（侵删）</p>
-      <div class="warn"><b>避雷：</b>园区极大，<b>不坐电瓶车步行全程约 5 小时</b>，务必买车票<span class="ref">[4]</span>；门口私人"讲解"勿跟，认准官方<span class="ref">[3]</span>。东区绿石林徒步强度大，本行程不安排。</div>
-    </div>
-  </div>
-
-  <h3>🔄 备选（本次未安排 · 供替换/加站参考）</h3>
-
-  <div class="spot">
-    <div class="gal">
-      <div class="gal-main">
-        <button class="gal-btn gal-prev" aria-label="上一张">‹</button>
-        <img src="assets/img/fuxian-1.jpg" alt="抚仙湖湖上凉亭白桥">
-        <button class="gal-btn gal-next" aria-label="下一张">›</button>
-        <span class="gal-count">1/5</span><span class="gal-hint">点图放大 · 左右滑动翻页</span>
-      </div>
-      <div class="gal-thumbs">
-        <img src="assets/img/fuxian-1.jpg" alt="湖上凉亭白桥全景" class="on">
-        <img src="assets/img/fuxian-2.jpg" alt="湖面游船与帆船（游客实拍）">
-        <img src="assets/img/fuxian-3.jpg" alt="湖畔无边泳池打卡">
-        <img src="assets/img/fuxian-4.jpg" alt="环湖观光四轮车（游客实拍）">
-        <img src="assets/img/fuxian-5.jpg" alt="月夜湖景">
-      </div>
-    </div>
-    <div class="info">
-      <h3>备选 · 玉溪抚仙湖（澄江）</h3>
-      <div class="meta"><span class="chip">备选·本次未安排</span><span class="chip b">动车约2.5小时＋转车约1小时</span></div>
-      <p>云南人气最高的高原深水湖之一，"琉璃万顷"：环湖有禄充、孤山（阳光海岸）、樱花谷、月亮湾等子景点，可搭配<b>澄江化石地自然博物馆</b>（世界自然遗产）组成"上午湖、下午馆"的配对<span class="ref">[25]</span>。</p>
-      <p class="src">图源：文旅头条、Tripadvisor、搜狐等公开图源与游客实拍（侵删）</p>
-      <div class="warn"><b>注意·路程较远：</b>单程门到门约 <b>3.5 小时</b>（版纳→玉溪站动车约 2.5 小时＋玉溪→澄江约 1 小时车程）<span class="ref">[25]</span>，比普洱远一圈，两天行程中各约有半天在路上。若未来启用（替换普洱段或加站），建议单独安排 2 天 1 晚，并接受比普洱段更紧的接驳；玉溪的哀牢山（石门峡、褚橙庄园）距玉溪市区还有约 3 小时山路，属另一个独立目的地，不建议并入。</div>
-    </div>
-  </div>
-
-  <div class="tbl-wrap"><table>
-    <tr><th>景点</th><th>参考门票</th><th>距告庄/驻点</th><th>建议时长</th><th>安排</th></tr>
-    <tr><td>太阳河森林公园（普洱）</td><td>门票＋接驳车约100元</td><td>动车1小时＋车程40分</td><td>4–5 小时</td><td>D2</td></tr>
-    <tr><td>那柯里·茶马古道驿站（普洱）</td><td>免费</td><td>动车1小时＋车程30分</td><td>2 小时</td><td>D3 上午</td></tr>
-    <tr><td>小凹子咖啡庄园（普洱）</td><td>入园免费·咖啡自费</td><td>动车1小时＋车程30分</td><td>1.5–2 小时</td><td>D3 下午</td></tr>
-    <tr><td>茶马古城夜景（普洱）</td><td>免费</td><td>普洱市郊</td><td>夜逛1.5 小时</td><td>D2 晚</td></tr>
-    <tr><td>告庄·大金塔·星光夜市</td><td>免费</td><td>—（住处）</td><td>每晚随性</td><td>D3/D5/D7 晚</td></tr>
-    <tr><td>曼听公园＋总佛寺</td><td>约40元 / 免费</td><td>约3公里</td><td>2.5–3 小时</td><td>D4 上午</td></tr>
-    <tr><td>湄公河之夜晚会</td><td>甲票约137元起</td><td>（曼听园内）</td><td>约2.5 小时</td><td>D4 晚</td></tr>
-    <tr><td>勐泐大佛寺</td><td>约100–120元</td><td>约6公里</td><td>2–2.5 小时</td><td>D4 下午</td></tr>
-    <tr><td>原始森林公园</td><td>约65元</td><td>约10公里</td><td>2.5 小时</td><td>D5 上午</td></tr>
-    <tr><td>野象谷</td><td>约75元（电瓶车约50元）</td><td>约45公里</td><td>3 小时</td><td>D6 上午</td></tr>
-    <tr><td>曼掌村</td><td>村寨免费·体验80–150元</td><td>约28公里</td><td>3 小时</td><td>D6 下午</td></tr>
-    <tr><td>傣族园（橄榄坝）</td><td>约45元</td><td>约32公里</td><td>半天（含泼水）</td><td>D7 全天</td></tr>
-    <tr><td>澜沧江夜游游船</td><td>约166–218元</td><td>码头近告庄</td><td>1.5–2 小时</td><td>D7 晚</td></tr>
-    <tr><td>中科院热带植物园</td><td>约80元（电瓶车约50元）</td><td>约70公里</td><td>6–7 小时</td><td>D8 全天</td></tr>
-    <tr><td>热带花卉园</td><td>约40元</td><td>市区</td><td>2 小时</td><td>D9 上午</td></tr>
-    <tr><td>傣秀（备选）</td><td>约220元起</td><td>融创片区</td><td>约70分钟</td><td>D9 晚（可选）</td></tr>
-    <tr><td>望天树（不推荐本次去）</td><td>约80元</td><td>约165公里/3小时</td><td>全天</td><td>—</td></tr>
-    <tr><td>抚仙湖（玉溪·备选）</td><td>环湖子景点部分收费</td><td>动车约2.5小时＋转车约1小时</td><td>2 天 1 晚</td><td>—（备选）</td></tr>
-  </table>
-  <p class="src" style="padding:10px 16px;">价格来源：去哪儿旅游资讯门票汇总（2025-06-26）<span class="ref">[4]</span>、淘宝旅行野象谷攻略（2025-09-15）<span class="ref">[16]</span>、淘宝旅行晚会售票页<span class="ref">[13]</span>、Trip.com 景点指南<span class="ref">[14][18]</span>、去哪儿普洱亲子游攻略（2026-09-19，太阳河约100元）<span class="ref">[22]</span>、Trip.com 玉溪攻略（2025-12，抚仙湖子景点）<span class="ref">[25]</span>。动车票价以 12306 实时为准<span class="ref">[21]</span>。</p></div>
-</section>
-
-<!-- ================= 美食 ================= -->
-<section id="food">
-  <h2 class="sec">美食清单</h2>
-  <p class="sec-sub">傣味以酸、辣、香为核心：柠檬的酸、小米辣的辣、香茅草与烧烤的香。整体口味偏重，<b>吃不了酸辣的点菜时先跟店家说</b><span class="ref">[2]</span>。普洱段则以茶山风味与咖啡为主。</p>
-
-  <div class="grid3">
-    <div class="food-card"><img src="assets/img/shouzhuafan.jpg" alt="孔雀宴手抓饭"><div class="cap"><b>傣味手抓饭 / 孔雀宴</b>竹簸箕铺芭蕉叶，五彩糯米饭＋烤肉＋时蔬一箩端上，仪式感拉满。图源：博客园游记</div></div>
-    <div class="food-card"><img src="assets/img/grilled-fish.jpg" alt="香茅草烤鱼"><div class="cap"><b>香茅草烤鱼</b>香茅草捆鱼炭烤，傣味头牌，几乎所有排档都有。图源：Tripbok</div></div>
-    <div class="food-card"><img src="assets/img/starlight-market.jpg" alt="夜市小吃"><div class="cap"><b>夜市小吃矩阵</b>舂鸡脚、烤五花肉、包烧、竹筒饭、菠萝饭、泡鲁达、老挝冰咖啡<span class="ref">[1][3]</span>；普洱茶马古城的烤豆腐别错过<span class="ref">[23]</span>。图源：文化和旅游部</div></div>
-  </div>
-
-  <h3>🍴 餐厅推荐（口碑与评分依据见来源）</h3>
-  <div class="tbl-wrap"><table>
-    <tr><th>餐厅</th><th>位置</th><th>人均</th><th>推荐理由 / 招牌</th></tr>
-    <tr><td><b>曼飞龙烤鸡（总店）</b></td><td>告庄西双景</td><td>约66元</td><td>大众点评「景洪烤鸡人气榜」头部商户，评价数约7万条量级；现烤傣味烤鸡，皮脆肉嫩<span class="ref">[15]</span>。高峰排队久，<b>尽量避开晚高峰到店</b><span class="ref">[20]</span></td></tr>
-    <tr><td><b>傣味烧烤（曼听公园店）</b></td><td>曼听公园旁</td><td>约62元</td><td>点评人气榜在榜商户，现烤烤鸡口碑好，逛完公园直接进店<span class="ref">[15]</span></td></tr>
-    <tr><td><b>玉丙黎明傣家烧烤</b></td><td>曼听小寨</td><td>约50–70元</td><td>本地有名的大排档，香茅草烤鱼出色<span class="ref">[9]</span></td></tr>
-    <tr><td><b>曼回索玉旺罕傣家乐</b></td><td>曼回索村寨</td><td>约50–80元</td><td>藏在村寨里的傣家乐，本地人认可、性价比高，"网红店排队两小时可能还没村寨里好吃"<span class="ref">[20][14]</span></td></tr>
-    <tr><td><b>红牙象傣味美食园</b></td><td>景洪市区</td><td>约60–80元</td><td>三十年老字号傣味园，菜式齐全<span class="ref">[9]</span></td></tr>
-    <tr><td><b>帕雅餐厅 / 春武里 / mamalao</b></td><td>告庄及周边</td><td>约60–100元</td><td>2025 年度攻略常推：傣味正餐、泰式料理、老挝烤肉糯米饭各占一席<span class="ref">[14]</span></td></tr>
-    <tr><td><b>那柯里农家乐 / 茶马古城夜市</b></td><td>普洱</td><td>约40–70元</td><td>马帮菜、烤豆腐、围炉煮茶<span class="ref">[23]</span>；小凹子庄园的手冲咖啡套餐按杯计<span class="ref">[22]</span></td></tr>
-    <tr><td><b>江边夜市小吃摊</b></td><td>澜沧江堤</td><td>随吃随结</td><td>本地人夜市：烧烤、果汁、水果更便宜实惠<span class="ref">[1]</span></td></tr>
-  </table></div>
-  <p class="src" style="margin-top:10px;">评分数据来源：大众点评·景洪市烤鸡人气商户排行（动态榜单）<span class="ref">[15]</span>；餐厅名单来源：Trip.com 攻略（2025-12-10）<span class="ref">[14]</span>、什么值得买实测帖<span class="ref">[7]</span>。告庄内餐厅整体偏游客化、价格偏高，想吃地道的往村寨和曼听小寨走<span class="ref">[3]</span>。</p>
-</section>
-
-<!-- ================= 避坑 ================= -->
-<section id="avoid">
-  <h2 class="sec">避坑指南（综合差评与避雷帖）</h2>
-  <p class="sec-sub">以下每一条都来自 2025 年以来公开攻略/差评帖的交叉印证，出发前建议再刷一遍平台最新帖子（小红书 App 内搜「西双版纳 避雷」按最新排序）。</p>
-
-  <div class="avoid-grid">
-    <div class="avoid-item"><h4>📷 夜市旅拍：19.9/99/199 元低价引流</h4>
-      <p>夜市与告庄周边的超低价写真套餐是引流套路：拍后以服装升级、妆容、精修、底片等名目层层加钱，底片不全送是投诉重灾区<span class="ref">[7][8]</span>。</p>
-      <p class="ok">✔ 合理行情：傣装租赁＋妆造约 80–120 元/4小时；基础旅拍套餐约 298 元起<span class="ref">[7][8]</span>。拍前白纸黑字确认：几套衣服、多少底片、几张精修、加片单价；不预付全款。</p></div>
-
-    <div class="avoid-item"><h4>🧃 星光夜市鲜榨果汁掺水</h4>
-      <p>攻略明确点名星光夜市果汁"掺水严重"，建议去江边夜市买<span class="ref">[11]</span>。</p>
-      <p class="ok">✔ 看着摊主当面现榨、不加"调和汁"再买；或直接喝老挝冰咖啡。</p></div>
-
-    <div class="avoid-item"><h4>🛒 夜市购物开价虚高</h4>
-      <p>星光夜市商品面向游客定价偏高，手工饰品与网上同款价差很大<span class="ref">[2]</span>；傣服三件套江边夜市约 35 元<span class="ref">[2]</span>。</p>
-      <p class="ok">✔ 非明码标价的摊位先砍价再决定；贵重饰品、玉器不在夜市买。</p></div>
-
-    <div class="avoid-item"><h4>🚗 黑车与"热心"包车</h4>
-      <p>出站口、景区门口主动搭讪的"低价用车/一日游"是被点名最多的坑<span class="ref">[2][3]</span>。</p>
-      <p class="ok">✔ 只用网约车平台叫车、平台购票；远郊走「版纳好行」直通车或正规纯玩小团（确认无购物）；普洱段同理——平台叫车或酒店代订包车。</p></div>
-
-    <div class="avoid-item"><h4>🍵 茶叶与玉器购物陷阱</h4>
-      <p>版纳是普洱茶产区，游客被带去茶山茶店"品茶"后高价购茶、赌石买玉的案例常年有之<span class="ref">[3]</span>；普洱段茶店更密集，同样适用。</p>
-      <p class="ok">✔ 新手买茶选正规品牌店、超市明码标价产品；不进任何"顺路参观"的茶厂玉店；不参加含购物点的一日游。</p></div>
-
-    <div class="avoid-item"><h4>⛰ 景区二次消费叠加</h4>
-      <p>多数景区"首道门票"不含电瓶车/索道/晚会：植物园电瓶车约50元、野象谷电瓶车约50元、大佛寺电瓶车/扶梯另收40–60元、太阳河门票＋接驳车约100元<span class="ref">[4][9][16][22]</span>。</p>
-      <p class="ok">✔ 买票前看清楚套票内容，按体力买电瓶车（植物园强烈建议买），别硬走。</p></div>
-
-    <div class="avoid-item"><h4>🐘 对野象谷预期错位</h4>
-      <p>差评高发点："没看到野象"。偶遇野生象是概率事件<span class="ref">[16]</span>。</p>
-      <p class="ok">✔ 把卖点放在高空栈道雨林生态＋蝴蝶园；上午去概率更高；"雨林牧象"提前3天官方渠道预约<span class="ref">[3][16]</span>。</p></div>
-
-    <div class="avoid-item"><h4>🛕 佛寺礼仪与着装</h4>
-      <p>吊带、短裤、拖鞋进寺会被拦或失礼；不指点佛像、不摸小僧人头部<span class="ref">[3]</span>。</p>
-      <p class="ok">✔ 随身带一条大披肩（又能防晒又能进寺）；寺门口一般可租筒裙。</p></div>
-
-    <div class="avoid-item"><h4>🏨 住宿文字游戏</h4>
-      <p>"免费接机"限时段、"赠送旅拍"限张数、旺季价格猛涨等是订房常见套路<span class="ref">[2][17]</span>。</p>
-      <p class="ok">✔ 订前逐条看费用说明与退改规则；10月下旬房价尚未到旺季高位，尽早锁定连住价；普洱 2 晚选普洱站/市中心周边，方便 D3 返程。</p></div>
-
-    <div class="avoid-item"><h4>🌶 饮食与肠胃</h4>
-      <p>傣味酸辣＋烧烤为主，肠胃弱容易不适<span class="ref">[2]</span>。</p>
-      <p class="ok">✔ 点菜时说"少辣"；生冷舂菜、生腌按肠胃量力；夜市摊看卫生状况再坐。</p></div>
-  </div>
-</section>
-
-<!-- ================= 游玩建议 ================= -->
-<section id="tips">
-  <h2 class="sec">综合游玩建议</h2>
-  <div class="grid2">
-    <div class="card">
-      <h4>⏱ 节奏与体力管理</h4>
-      <ul style="font-size:22px; padding-left:22px;">
-        <li><b>前 3 天走完普洱段</b>：D1 落地转场、D2 太阳河、D3 古道咖啡返程；<b>D3 晚起告庄连住 7 晚，之后零搬行李</b>、版纳主段一气呵成。</li>
-        <li>每天<b>上午、下午各 1 个活动</b>，午休约 2 小时（市区日回酒店午睡；D6 野象谷＋曼掌村、D7 傣族园等远郊同线日以午餐＋就地歇脚替代）。</li>
-        <li><b>D9 收官日轻量排布</b>（花卉园＋水上市场＋告别晚宴），当晚打包；D10 上午留足从容，午后返程。</li>
-        <li>步数最多的是 D2 太阳河与 D8 植物园，穿最舒服的鞋。</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>🎫 购票与预订时序</h4>
-      <ul style="font-size:22px; padding-left:22px;">
-        <li><b>现在</b>：订往返机票＋普洱 2 晚（普洱站/市中心周边）＋告庄 7 晚（谈连住价）。</li>
-        <li><b>出发前 3–7 天</b>：12306 购动车票——D1 去程选<b>落地当晚班次（务必可改签）</b>、D3 返程选<b>傍晚班次</b><span class="ref">[21]</span>；如要"雨林牧象"，官方渠道预约<span class="ref">[16]</span>。</li>
-        <li><b>每天前一天</b>：线上买好次日门票/晚会票/直通车票（多数景区实名制，线上出票免排队）<span class="ref">[4][16]</span>。</li>
-        <li>2025 年起景区普遍实名制，购票绑定身份证、刷证入园<span class="ref">[16]</span>。</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>🛡 安全要点</h4>
-      <ul style="font-size:22px; padding-left:22px;">
-        <li><b>身份证全程随身</b>：全州为边境管理区，机场、公路检查站常态查验；坐动车同样刷证<span class="ref">[12]</span>。</li>
-        <li>夜间活动集中在告庄与江边夜市的亮灯主路；回酒店用平台叫车、分享行程给家人。普洱段晚上只逛茶马古城亮灯区。</li>
-        <li>雨林景区（太阳河＋版纳各园）不脱离栈道、不投喂野生动物；江边夜游听从船方安排、穿好救生衣。</li>
-        <li>蚊虫防护做到位（防蚊液/长袖），出现发热皮疹及时就医<span class="ref">[2][3]</span>。</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h4>💡 提升体验的小事</h4>
-      <ul style="font-size:22px; padding-left:22px;">
-        <li>给手机充满电再出门：拍照＋扫码购票都费电，充电宝随身。</li>
-        <li>告庄游客中心可拿纸质地图，问清「版纳好行」上车点；普洱站出站口有出租车排队区。</li>
-        <li>上午光线柔和、人少凉快，是拍照与逛园黄金档。</li>
-        <li>D10 返程日上午什么都不赶：自然醒、从容吃早餐再去机场。</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 行前物品 ================= -->
-<section id="packing">
-  <h2 class="sec">行前物品清单</h2>
-  <p class="sec-sub">常规旅行用品（证件复印件、洗漱、常用药、充电器等）不赘述，以下为<b>去普洱＋西双版纳特别要注意带的</b>：</p>
-  <div class="pack card">
-    <div class="pack-cols">
-      <div>
-        <ul>
-          <li><b>身份证（重中之重）</b><span class="why">边境管理区查验、进景区实名购票、动车乘车都要用<span class="ref">[12][16][21]</span></span></li>
-          <li><b>少量现金（200–300元零钱）</b><span class="why">夜市小摊、村寨傣家乐、包车常用；大额扫码为主</span></li>
-          <li><b>高倍防晒（SPF50+）＋遮阳帽＋墨镜＋防晒衣</b><span class="why">热带紫外线强，防晒是硬需求<span class="ref">[3]</span></span></li>
-          <li><b>驱蚊液＋止痒药</b><span class="why">雨林湿热蚊虫多，本地攻略必提项<span class="ref">[2][3]</span></span></li>
-          <li><b>大披肩 / 过膝裙 / 长裤</b><span class="why">进佛寺有着装要求，披肩还能防晒<span class="ref">[3]</span></span></li>
-        </ul>
-      </div>
-      <div>
-        <ul>
-          <li><b>防滑舒适步行鞋</b><span class="why">太阳河、植物园与雨林栈道全天步行；不建议新鞋</span></li>
-          <li><b>轻便雨伞/雨衣</b><span class="why">热带阵雨说来就来，晴雨两用</span></li>
-          <li><b>肠胃药＋藿香正气＋个人常用药</b><span class="why">酸辣饮食＋湿热环境；带足自己日常服用的药品</span></li>
-          <li><b>保温杯</b><span class="why">云南水土习惯喝热水，酒店灌好带出门</span></li>
-          <li><b>充电宝（1万毫安以上）</b><span class="why">拍照、购票、叫车全靠手机</span></li>
-          <li><b>便携行李袋</b><span class="why">行李直接随行动车（车厢行李架充足），轻装下车更省力</span></li>
-        </ul>
-      </div>
-    </div>
-    <p class="src" style="margin-top:14px;">傣装不用自带：当地租借约 80–120 元/4 小时（含妆造）<span class="ref">[7]</span>；水果刀等利器勿放随身包（过安检麻烦）。</p>
-  </div>
-</section>
-
-<!-- ================= 预算 ================= -->
-<section id="budget">
-  <h2 class="sec">预算参考（单人 · 10 天）</h2>
-  <div class="tbl-wrap"><table>
-    <tr><th>项目</th><th>估算</th><th>说明</th></tr>
-    <tr><td>往返机票</td><td>约 1200–2400 元</td><td>西安直飞单程约 600–1200 元（淡季浮动大，以购票平台实时为准；备选空铁联运单程 300–500 元起<span class="ref">[19]</span>）</td></tr>
-    <tr><td>住宿（9 晚）</td><td>约 1350–3050 元</td><td>告庄约 150–350 元/晚×7<span class="ref">[6]</span>＋普洱市区约 150–300 元×2；连住可谈价</td></tr>
-    <tr><td>门票+演出</td><td>约 900–1200 元</td><td>版纳门票合计约 420 元＋晚会 137＋游船 178＋电瓶车约 150＋太阳河约 100＋可选傣秀 220<span class="ref">[4][13][14][16][22]</span></td></tr>
-    <tr><td>餐饮</td><td>约 900–1400 元</td><td>10 天每天 90–140 元（含两顿好的傣味正餐与普洱农家乐）</td></tr>
-    <tr><td>市内+城际交通</td><td>约 750–1050 元</td><td>版纳打车/班车/直通车＋版纳⇌普洱动车往返（票价以 12306 为准<span class="ref">[21]</span>）＋普洱打车</td></tr>
-    <tr><td>手信+弹性</td><td>约 300–500 元</td><td>茶叶/果干/咖啡等</td></tr>
-    <tr><td><b>合计（不含大交通）</b></td><td><b>约 4300–6200 元</b></td><td>与攻略纯版纳 10 天口径（人均约 4000 元<span class="ref">[5]</span>）相近：普洱段的动车与太阳河门票，由压缩两个机动日消化</td></tr>
-  </table></div>
-</section>
-
-<!-- ================= 来源 ================= -->
-<section id="sources">
-  <h2 class="sec">资料来源</h2>
-  <p class="sec-sub">本计划全部事实性信息（价格、班次、距离、避雷点、餐厅口碑）均来自以下公开来源，发布/检索可见日期均在 <b>2025 年 1 月 1 日之后</b>，检索日期 2026-09-28。标注"站内文章"的条目因平台反爬未取得直链，可按标题在对应平台检索原文核对。</p>
-  <div class="card">
-    <ol style="font-size:21px; padding-left:28px; line-height:2.1;">
-      <li>知乎专栏·游子吟《2026西双版纳旅游攻略「附景点+行程+天气+最佳旅游时间+美食」》，2026-04-08 — <a href="https://zhuanlan.zhihu.com/p/2025210307904021288" target="_blank">zhuanlan.zhihu.com/p/2025210307904021288</a>（直飞城市、机场距离、景点榜、双夜市对比、美食）</li>
-      <li>搜狐《刚从西双版纳回来！能劝一个是一个！（附最全攻略）》，2025-02-03 — <a href="https://www.sohu.com/a/855327845_121948408" target="_blank">sohu.com/a/855327845_121948408</a>（黑车/租车避坑、夜市物价与砍价、酸辣饮食提醒、住宿提前订、江边夜市傣服价位）</li>
-      <li>网易号·云南旅游攻略鱼鱼《西双版纳旅游攻略看这篇就够了！耗时6小时整理的避坑干货》，2026-01-22 — <a href="https://www.163.com/dy/article/KJSRAJC30556JM1U.html" target="_blank">163.com/dy/article/KJSRAJC30556JM1U.html</a>（避坑清单、佛寺礼仪、茶业购物、经典行程）</li>
-      <li>去哪儿旅游资讯《7月去云南西双版纳怎么游玩？》，2025-06-26 — 站内文章（植物园 80/原始森林 65/傣族园 45/曼听 40/基诺山寨 160 元等门票汇总、植物园班车与电瓶车）</li>
-      <li>新浪旅游《10天深度游西双版纳怎么玩？3条主线+人均4000元预算拆解+FAQ》，2026 年发布 — 站内文章（10天人均预算口径、住宿价位）</li>
-      <li>什么值得买《告庄住宿怎么选？百元客栈到千元酒店全解析，夜市步行+避坑》，2025 年发布 — 站内文章（机场-告庄距离、出租运价起步价）</li>
-      <li>什么值得买《带娃带老人版纳怎么玩：住哪不吵、怎么逛不挤、4天3晚懒人攻略》，2026 年发布 — 站内文章（傣装租借行情、低价旅拍引流、排队时长）</li>
-      <li>什么值得买《299元跟拍写真值不值？选对档位和机构》，2025–2026 年发布 — 站内文章（旅拍档位与避坑守则）</li>
-      <li>什么值得买《西双版纳避雷实录：住哪玩哪不踩坑》，2025 年发布 — 站内文章（大佛寺电瓶车、傣族园商业化、玉丙黎明烧烤）</li>
-      <li>Trip.com 景点指南《曼掌村参观攻略》，2026 年更新 — 站内页面（曼掌村位置交通、直通车、体验项目）</li>
-      <li>新浪旅游《西双版纳3天怎么玩？精华路线+避坑指南+FAQ》，2026-09-11 — 站内文章（果汁掺水点名、基诺山向导预约）</li>
-      <li>新浪旅游《去云南旅游要带证件吗？3类证件清单+避坑指南+FAQ》，2026-09-15 — 站内文章（边境管理区证件要求）</li>
-      <li>淘宝旅行（阿里旅行）·曼听御花园票务页《澜沧江·湄公河之夜歌舞篝火晚会》，2025–2026 年在售 — 站内页面（晚会票价 137/200 元、入场时间、公园开放时间）</li>
-      <li>Trip.com《誰說去熱帶要飛泰國？》餐厅榜单，2025-12-10 — 站内页面（帕雅/春武里/mamalao/曼回索玉旺罕）＋ Trip.com 傣秀/澜沧江游船票价页</li>
-      <li>大众点评·景洪市烤鸡人气商户排行（动态榜单，2026-09 检索）— <a href="https://m.dianping.com/dishes/list/c1908d10024042" target="_blank">m.dianping.com/dishes/list/c1908d10024042</a>（曼飞龙烤鸡总店人均约66元/告庄；傣味烧烤曼听公园店约62元）</li>
-      <li>淘宝旅行攻略《野象谷景区门票怎么买划算？25年最新攻略+避坑指南》，2025-09-15 — 站内文章（野象谷 75 元/电瓶车 50 元、雨林牧象预约、观象时段、表演争议）</li>
-      <li>搜狐《版纳酒店预订的8个常见套路》，2026 年发布 — 站内文章（"免费接机/赠送旅拍"文字游戏）</li>
-      <li>Trip.com《望天树景区游玩指南》，2026 年更新 — 站内页面（望天树 80 元、距景洪约 3 小时、植物园与望天树定位区别）</li>
-      <li>新浪旅游《去西双版纳转机哪里便宜？昆明中转性价比最高》（空铁联运 300–500 元、高铁中转时长口径），2026 年发布 — 站内文章</li>
-      <li>什么值得买《排队两小时的网红店，可能还没村寨里的好吃》，2025 年发布 — 站内文章（网红店排队时长、村寨老店口碑对比）</li>
-      <li>中国日报《中老铁路跨境列车运行区段延长至普洱站…》（西双版纳⇌普洱动车通达、班次加密），2025-05 — 站内报道（ex.chinadaily.com.cn 可按标题检索）</li>
-      <li>去哪儿旅游资讯《普洱亲子游选太阳河森林公园还是咖啡庄园？》，2026-09-19 — 站内文章（太阳河门票＋接驳车约 100 元、小熊猫互动、庄园体验对比、普洱包车建议）</li>
-      <li>Trip.com《普洱 5 天 4 夜躺平攻略（左手咖啡右手茶）》，2025-04 — 站内页面（小凹子咖啡庄园、那柯里驿站、茶马古城夜市与烤豆腐）</li>
-      <li>Trip.com《普洱茶马古道旅游区》景点页，2025-08-22 更新 — 站内页面（茶马古道景区文化内容、那柯里驿站看点）</li>
-      <li>Trip.com《玉溪 4 日 3 夜詳細行程規劃（撫仙湖·澄江化石地·通海）》，2025-12-21 更新 — 站内页面（抚仙湖禄充/孤山/樱花谷等子景点、澄江化石地自然博物馆、环湖玩法）</li>
-    </ol>
-    <p class="src" style="margin-top:16px;">
-      ℹ️ 说明：①小红书站内笔记需登录访问，本计划以可公开核验的平台内容为准；出行前建议在小红书 App 内按「西双版纳 避雷」「普洱 攻略」按最新排序再刷一遍近期帖子。②马蜂窝站内检索页对抓取返回为空，其社区结论已通过上述多平台来源交叉印证。③所有门票/票价均为参考价，以景区与平台当日公示为准；动车班次与票价以 12306 实时为准。④文中图片共 66 张（图集主图与缩略图同源），来自公开网络（图注已注明来源平台，优先选用游客实拍视角，仅作行程展示用，版权归原作者；如有侵权请联系删除）。
-    </p>
-  </div>
-</section>
+<div class="dots" id="dots"></div>
 
 <footer>
-  📍 计划生成于 2026-09-28 · 信息检索截至当日 · 适用于 2026-10-20 至 10-29 出行窗口（10 天 9 晚，普洱段前置 3 天 2 晚）<br>
-  本文件为个人行程规划用途；出行前请再次核对航班、动车、门票与开放时间。
+  📍 两份攻略均生成于 2026-09 · 信息来源与避坑提示见各攻略内页 · 出行前请再次核对航班与门票<br>
+  Travel Shelf · AyanMeow
 </footer>
 
-</div><!-- /wrap -->
-
 <script>
-/* ================= 景点图片集：缩略图切换 / 左右按钮 / 触摸滑动 / 灯箱放大 ================= */
 (function(){
-  var lb = document.createElement('div');
-  lb.className = 'lb';
-  lb.innerHTML = '<button class="lb-x" aria-label="关闭">×</button>'+
-                 '<button class="lb-btn lb-prev" aria-label="上一张">‹</button>'+
-                 '<img src="" alt="">'+
-                 '<button class="lb-btn lb-next" aria-label="下一张">›</button>'+
-                 '<div class="lb-cap"></div>';
-  document.body.appendChild(lb);
-  var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('.lb-cap');
-  var cur = null; // {items, go, idx}
+  var track = document.getElementById('track');
+  var cards = [].slice.call(track.querySelectorAll('.card'));
+  var dotsBox = document.getElementById('dots');
+  var n = cards.length, cur = 0, timer = null;
 
-  function lbUpd(){
-    var it = cur.items[cur.idx];
-    lbImg.src = it.src; lbImg.alt = it.alt;
-    lbCap.textContent = it.cap + '（' + (cur.idx + 1) + '/' + cur.items.length + '）';
-  }
-  function lbMove(d){
-    cur.idx = (cur.idx + d + cur.items.length) % cur.items.length;
-    cur.go(cur.idx); lbUpd();
-  }
-  function lbClose(){ lb.classList.remove('on'); cur = null; }
-  lb.querySelector('.lb-x').addEventListener('click', lbClose);
-  lb.querySelector('.lb-prev').addEventListener('click', function(){ lbMove(-1); });
-  lb.querySelector('.lb-next').addEventListener('click', function(){ lbMove(1); });
-  lb.addEventListener('click', function(e){ if(e.target === lb || e.target === lbCap) lbClose(); });
-  document.addEventListener('keydown', function(e){
-    if(!lb.classList.contains('on')) return;
-    if(e.key === 'Escape') lbClose();
-    else if(e.key === 'ArrowLeft') lbMove(-1);
-    else if(e.key === 'ArrowRight') lbMove(1);
+  cards.forEach(function(_, i){
+    var d = document.createElement('i');
+    if(i === 0) d.className = 'on';
+    d.addEventListener('click', function(){ go(i); });
+    dotsBox.appendChild(d);
   });
-  var lbx = null;
-  lb.addEventListener('touchstart', function(e){ lbx = e.touches[0].clientX; }, {passive:true});
-  lb.addEventListener('touchend', function(e){
-    if(lbx === null) return;
-    var dx = e.changedTouches[0].clientX - lbx;
-    if(Math.abs(dx) > 40) lbMove(dx < 0 ? 1 : -1);
-    lbx = null;
+  var dots = [].slice.call(dotsBox.children);
+
+  function place(){
+    cards.forEach(function(c, i){
+      var off = (i - cur + n) % n;   // 0=中 1=左 2=右(3张时)
+      c.classList.remove('pos-0','pos-1','pos-2','off');
+      if(off === 0) c.classList.add('pos-0');
+      else if(off === 1) c.classList.add('pos-1');
+      else if(off === 2) c.classList.add('pos-2');
+      else c.classList.add('off');
+      c.style.pointerEvents = (off === 0) ? '' : 'none';
+      c.setAttribute('aria-hidden', off === 0 ? 'false' : 'true');
+    });
+    dots.forEach(function(d, i){ d.classList.toggle('on', i === cur); });
+  }
+  function go(i){ cur = (i + n) % n; place(); restart(); }
+  function step(d){ go(cur + d); }
+  function restart(){
+    if(timer) clearInterval(timer);
+    timer = setInterval(function(){ step(1); }, 5200);
+  }
+
+  document.getElementById('prev').addEventListener('click', function(){ step(-1); });
+  document.getElementById('next').addEventListener('click', function(){ step(1); });
+
+  // 侧卡点击转到正面；中卡为<a>自然跳转
+  cards.forEach(function(c, i){
+    c.addEventListener('click', function(e){
+      var off = (i - cur + n) % n;
+      if(off !== 0){ e.preventDefault(); go(i); }
+    });
+  });
+
+  // 悬停暂停自动播放
+  var stage = document.getElementById('stage');
+  stage.addEventListener('mouseenter', function(){ if(timer) clearInterval(timer); });
+  stage.addEventListener('mouseleave', restart);
+
+  // 触摸滑动
+  var sx = null;
+  stage.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; if(timer) clearInterval(timer); }, {passive:true});
+  stage.addEventListener('touchend', function(e){
+    if(sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    else restart();
+    sx = null;
   }, {passive:true});
 
-  document.querySelectorAll('.gal').forEach(function(gEl){
-    var mainImg = gEl.querySelector('.gal-main img');
-    var count = gEl.querySelector('.gal-count');
-    var strip = gEl.querySelector('.gal-thumbs');
-    var thumbs = [].slice.call(strip.querySelectorAll('img'));
-    var items = thumbs.map(function(t){ return {src:t.getAttribute('src'), alt:t.alt, cap:t.alt}; });
-    var idx = 0;
-
-    function go(i){
-      idx = (i + items.length) % items.length;
-      mainImg.src = items[idx].src;
-      mainImg.alt = items[idx].alt;
-      count.textContent = (idx + 1) + '/' + items.length;
-      thumbs.forEach(function(t, j){ t.classList.toggle('on', j === idx); });
-      var el = thumbs[idx];
-      strip.scrollLeft = el.offsetLeft - strip.offsetWidth / 2 + el.offsetWidth / 2;
-    }
-    thumbs.forEach(function(t, j){ t.addEventListener('click', function(){ go(j); }); });
-    gEl.querySelector('.gal-prev').addEventListener('click', function(){ go(idx - 1); });
-    gEl.querySelector('.gal-next').addEventListener('click', function(){ go(idx + 1); });
-    mainImg.addEventListener('click', function(){
-      cur = {items:items, go:go, idx:idx};
-      lb.classList.add('on'); lbUpd();
-    });
-    var sx = null;
-    gEl.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, {passive:true});
-    gEl.addEventListener('touchend', function(e){
-      if(sx === null) return;
-      var dx = e.changedTouches[0].clientX - sx;
-      if(Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
-      sx = null;
-    }, {passive:true});
-    go(0);
-  });
-})();
-</script>
-
-<script>
-(function(){
-  // ---------- 坐标系处理：高德底图为 GCJ-02，标记点存 WGS-84，按底图动态换算 ----------
-  function wgs2gcj(lat,lng){
-    var a=6378245.0, ee=0.00669342162296594323;
-    function tLat(x,y){var r=-100+2*x+3*y+0.2*y*y+0.1*x*y+0.2*Math.sqrt(Math.abs(x));
-      r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;
-      r+=(20*Math.sin(y*Math.PI)+40*Math.sin(y/3*Math.PI))*2/3;
-      r+=(160*Math.sin(y/12*Math.PI)+320*Math.sin(y*Math.PI/30))*2/3; return r;}
-    function tLng(x,y){var r=300+x+2*y+0.1*x*x+0.1*x*y+0.1*Math.sqrt(Math.abs(x));
-      r+=(20*Math.sin(6*x*Math.PI)+20*Math.sin(2*x*Math.PI))*2/3;
-      r+=(20*Math.sin(x*Math.PI)+40*Math.sin(x/3*Math.PI))*2/3;
-      r+=(150*Math.sin(x/12*Math.PI)+300*Math.sin(x/30*Math.PI))*2/3; return r;}
-    var dLat=tLat(lng-105,lat-35), dLng=tLng(lng-105,lat-35);
-    var radLat=lat/180*Math.PI, magic=Math.sin(radLat);
-    magic=1-ee*magic*magic; var sqrtMagic=Math.sqrt(magic);
-    dLat=(dLat*180)/((a*(1-ee))/(magic*sqrtMagic)*Math.PI);
-    dLng=(dLng*180)/(a/sqrtMagic*Math.cos(radLat)*Math.PI);
-    return [lat+dLat, lng+dLng];
-  }
-  var useGCJ = true; // 默认高德底图
-  function cv(lat,lng){ return useGCJ ? wgs2gcj(lat,lng) : [lat,lng]; }
-
-  var map = L.map('map',{scrollWheelZoom:true}).setView([23.0,101.3],8);
-  var amap = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{
-    maxZoom:17, subdomains:'1234', attribution:'&copy; 高德地图'
-  });
-  var osmDe = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png',{
-    maxZoom:17, attribution:'&copy; OpenStreetMap contributors'
-  });
-  amap.addTo(map);
-  L.control.layers({'高德底图(默认)':amap,'OSM底图(海外镜像)':osmDe}).addTo(map);
-  map.on('baselayerchange', function(){
-    useGCJ = !useGCJ; // 两个底图来回切换：每换一次翻转坐标系
-    feats.forEach(function(f){
-      if(f.poly) f.obj.setLatLngs(f.segs.map(function(s){return cv(s[0],s[1]);}));
-      else f.obj.setLatLng(cv(f.lat,f.lng));
-    });
+  // 键盘左右
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowLeft') step(-1);
+    if(e.key === 'ArrowRight') step(1);
   });
 
-  var city='#2e7d5b', far='#2f6f8f', opt='#8a8f8a', feats=[];
-  function addPt(lat,lng,title,desc,color,radius){
-    var obj = L.circleMarker(cv(lat,lng),{radius:radius||8,color:'#fff',fillColor:color,fillOpacity:.95,weight:2})
-      .addTo(map).bindPopup('<b>'+title+'</b><br>'+desc);
-    feats.push({lat:lat,lng:lng,obj:obj});
-    return obj;
-  }
-  addPt(22.0071,100.7972,'🏨 告庄西双景（住宿大本营）','D3–D9 连住 7 晚','#c9a227',11);
-  var pts = [
-    // 普洱片区（前置 D1–D3）
-    [22.8160,100.9650,'普洱站','D1–D3 动车往返 · 约1小时',far],
-    [22.6270,101.0380,'太阳河森林公园','D2 全天 · 门票+接驳车约100元',far],
-    [22.6000,101.0000,'那柯里·茶马古道驿站','D3 上午 · 免费',far],
-    [22.6800,100.9700,'小凹子咖啡庄园','D3 下午 · 入园免费',far],
-    // 版纳主段
-    [21.9939,100.8045,'曼听公园','D4 上午 · 门票约40元',city],
-    [21.9927,100.8057,'总佛寺','D4 上午 · 免费',city],
-    [21.9615,100.7871,'勐泐大佛寺','D4 下午 · 约100–120元',city],
-    [22.0668,100.7906,'原始森林公园','D5 上午 · 约65元',city],
-    [22.1789,100.9052,'野象谷','D6 上午 · 约75元',far],
-    [22.1955,100.8845,'曼掌村','D6 下午 · 非遗体验',far],
-    [21.8905,100.8680,'傣族园（橄榄坝）','D7 全天 · 约45元',far],
-    [21.9994,100.7963,'江边夜市','D7 晚 · 本地人夜市',city],
-    [21.9280,101.2664,'中科院热带植物园','D8 全天 · 约80元',far],
-    [21.9746,100.7595,'嘎洒机场','D1 落地 / D10 返程 · 距市区约7公里','#b3432b'],
-    [22.0043,100.7839,'热带花卉园','D9 上午 · 市区',opt],
-    [21.4620,101.5670,'望天树（不推荐本次）','单程约3小时',opt],
-    // 备选（玉溪方向）
-    [24.5550,102.8970,'抚仙湖（玉溪·备选）','未安排 · 动车约2.5小时＋转车约1小时',opt]
-  ];
-  pts.forEach(function(p){ addPt(p[0],p[1],p[2],p[3],p[4]); });
-
-  // 大本营 → 远郊/普洱 当日往返车程示意（虚线，含动车线）
-  var hub = [22.0071,100.7972];
-  [[[22.1789,100.9052]],[[21.9280,101.2664]],[[22.1955,100.8845]],[[21.8905,100.8680]],[[21.9746,100.7595]],[[22.8160,100.9650]]].forEach(function(seg){
-    var obj = L.polyline([hub,seg[0]].map(function(s){return cv(s[0],s[1]);}),
-              {color:'#c9a227',weight:2.5,dashArray:'8 8',opacity:.75}).addTo(map);
-    feats.push({poly:true,segs:[hub,seg[0]],obj:obj});
-  });
-
-  var legend = L.control({position:'bottomright'});
-  legend.onAdd = function(){
-    var d = L.DomUtil.create('div','legend');
-    d.innerHTML = '<i style="background:#c9a227"></i>住宿大本营（告庄·D3起连住）<br>'+
-                  '<i style="background:#2e7d5b"></i>市区/近郊景点（≤30分钟车程）<br>'+
-                  '<i style="background:#2f6f8f"></i>远郊景点（当日往返，含普洱片区 D1–D3）<br>'+
-                  '<i style="background:#8a8f8a"></i>备选景点 &nbsp;<i style="background:#b3432b"></i>机场<br>'+
-                  '<span style="color:#7a5d00">- - - 虚线：当日往返车程/动车示意</span>';
-    return d;
-  };
-  legend.addTo(map);
-  setTimeout(function(){ map.invalidateSize(); }, 300);
+  place(); restart();
 })();
 </script>
 </body>
